@@ -3,13 +3,13 @@ import ChangeDescription from './ChangeDescription'
 export default class ChangeEvent {
   changes: ChangeDescription[] = []
 
-  constructor(...entityDescriptions: ChangeDescription[]) {
-    this.changes.push(...entityDescriptions)
+  constructor(...changeDescriptions: ChangeDescription[]) {
+    this.changes.push(...changeDescriptions)
   }
 
-  isRelevantFor(entityDescriptions: ChangeDescription|ChangeDescription[]): boolean {
+  isRelevantFor(changeDescriptions: ChangeDescription|ChangeDescription[]): boolean {
     for (let change of this.changes) {
-      if (change.isRelevantFor(entityDescriptions)) {
+      if (change.isRelevantFor(changeDescriptions)) {
         return true
       }
     }
