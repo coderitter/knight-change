@@ -88,7 +88,7 @@ let listener4 = {
 let listener5 = {
   entity: 'Task',
   idProps: { id: 5 },
-  changes: { method: 'update', props: ['parentId'] }
+  changes: { method: 'update', props: ['parentId', 'userId'] }
 }
 
 // listen to any delete change of any task with a userId of 12
