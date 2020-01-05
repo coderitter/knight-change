@@ -53,63 +53,49 @@ If you need different behaviour you can either take the output of this method as
 Now that you described a change there are change listeners who would like to decide if a change is relevant for them or not. You do that by describing a change which acts as a template for any incoming change description. Let the code talk.
 
 ```typescript
-let change = {
-  entity: 'Task',
-
-  idProps: {
-    id: 5,
-    parentId: 33,
-    userId: 12
-  },
-
-  changes: [{
-    method: 'update',
-    props: ['title']
-  }]
-}
-
 // listen to any change of any tasks
 let listener1 = {
   entity: 'Task'
 }
 
-// listen to any change of the task with id 5
+// listen to any change of a task with id 5
 let listener2 = {
   entity: 'Task',
   idProps: { id: 5 }
 }
 
-// listen to any change of any task having a parentId of 33
+// listen to any update change of a task with id 5
 let listener3 = {
   entity: 'Task',
-  idProps: { parentId: 33 }
-}
-
-// listen to any update change of any task having a userId of 12
-let listener4 = {
-  entity: 'Task',
-  idProps: { userId: 12 },
+  idProps: { id: 5 },
   changes: { method: 'update' }
 }
 
-// listen to any delete change of the task with id 5
-let listener5 = {
+// listen to any title update change of a task with id 5
+let listener4 = {
   entity: 'Task',
   idProps: { id: 5 },
-  changes: { method: 'delete' }
+  changes: { method: 'update', props: ['title'] }
 }
 
 // listen to any title update change of any task
-let listener6 = {
+let listener4 = {
   entity: 'Task',
   changes: { method: 'update', props: ['title'] }
 }
 
 // listen to any parentId or userId update change of the task with id 5
-let listener6 = {
+let listener5 = {
   entity: 'Task',
   idProps: { id: 5 },
-  changes: { method: 'update', props: ['id', 'parentId'] }
+  changes: { method: 'update', props: ['parentId'] }
+}
+
+// listen to any delete change of any task with a userId of 12
+let listener5 = {
+  entity: 'Task',
+  idProps: { userId: 12 },
+  changes: { method: 'delete' }
 }
 ```
 
@@ -149,7 +135,7 @@ let rule2 = {
 let listenerRuleSet = [ description1, description2 ]
 ```
 
-In this case we have two competing rules for tasks with an `id` of 5. If the incoming change is an update change then the update rule `rule2` used. In any other case the `rule1` is used. That means in the case of an update the listener is only interested if the changed property was the `parentId`.
+In this case we have two competing rules for tasks with an `id` of 5. If the incoming change is an update change then `rule2` used. In any other case `rule1` is used. That means in the case of an update the listener is only interested if the changed property was the `parentId`.
 
 ### Unspecific change descriptions
 
