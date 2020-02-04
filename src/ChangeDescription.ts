@@ -240,7 +240,7 @@ export default class ChangeDescription {
         method: method
       }
 
-      if (props != undefined) {
+      if (props != undefined && props.length > 0) {
         change.props = props
       }
 

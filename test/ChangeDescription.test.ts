@@ -281,6 +281,14 @@ describe('EntityDescription', function() {
     })
   })
 
+  describe('fullDescription', function() {
+    it('should not add an empty array of props', function() {
+      let desc = ChangeDescription.fullDescription({}, 'method', [])
+      expect(desc?.changes.length).to.equal(1)
+      expect(desc?.changes[0].props).to.be.undefined
+    })
+  })
+
   describe('describeAllIds', function() {
     it('should include the id property', function() {
       let result = ChangeDescription.describeAllIds({ id: 5, a: 'a', bbbbb: 'bbbbb' })
