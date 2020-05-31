@@ -88,7 +88,7 @@ export default class ChangeDescription {
       let mostSpecificChanges = []
 
       for (let changeDescription of changeDescriptions) {
-        if (changeDescription.containsChangeMethod(this)) {
+        if (changeDescription.entity == this.entity && changeDescription.containsChangeMethod(this)) {
           mostSpecificChanges.push(changeDescription)
         }
       }

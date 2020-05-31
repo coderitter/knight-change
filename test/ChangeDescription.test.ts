@@ -269,6 +269,7 @@ describe('EntityDescription', function() {
       let challengers = [
         new ChangeDescription('EntityName1', 1),
         new ChangeDescription('EntityName1', 1, { method: 'delete', props: ['prop2'] }),
+        new ChangeDescription('EntityName2', 1, { method: 'update', props: ['prop1'] }),
       ]
 
       let change1 = new ChangeDescription('EntityName1', 1, { method: 'update', props: ['prop1'] })
@@ -278,6 +279,14 @@ describe('EntityDescription', function() {
       let change2 = new ChangeDescription('EntityName1', 1, { method: 'delete', props: ['prop1'] })
       let result2 = change2.isRelevantFor(challengers)
       expect(result2).to.equal(false)
+
+      let change3 = new ChangeDescription('EntityName1', 1, { method: 'delete', props: ['prop2'] })
+      let result3 = change3.isRelevantFor(challengers)
+      expect(result3).to.equal(true)
+
+      let change4 = new ChangeDescription('EntityName2', 1, { method: 'update', props: ['prop1'] })
+      let result4 = change4.isRelevantFor(challengers)
+      expect(result4).to.equal(true)
     })
   })
 
