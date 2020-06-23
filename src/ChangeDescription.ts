@@ -3,10 +3,35 @@ export default class ChangeDescription {
   idProps: {[propName: string]: any} = {}
   changes: {method: string, props?: string[]}[] = []
 
+  constructor()
+  constructor(entityName: string)
+  constructor(entityName: string, id: number)
+  constructor(entityName: string, id: number, changeMethod: string)
+  constructor(entityName: string, id: number, change: { method: string, props?: string[] })
+  constructor(entityName: string, id: number, changes: ( string | { method: string, props?: string[] })[])
+  constructor(entityName: string, idProps: {[ propName: string ]: any })
+  constructor(entityName: string, idProps: {[ propName: string ]: any }, changeMethod: string)
+  constructor(entityName: string, idProps: {[ propName: string ]: any }, change: { method: string, props?: string[] })
+  constructor(entityName: string, idProps: {[ propName: string ]: any }, changes: ( string | { method: string, props?: string[] })[])
+  constructor(object: object)
+  constructor(object: object)
+  constructor(object: object, changeMethod: string)
+  constructor(object: object, change: { method: string, props?: string[] })
+  constructor(object: object, changes: ( string | { method: string, props?: string[] })[])
+  constructor(classFunction: { new(): any })
+  constructor(classFunction: { new(): any }, id: number)
+  constructor(classFunction: { new(): any }, id: number, changeMethod: string)
+  constructor(classFunction: { new(): any }, id: number, change: { method: string, props?: string[] })
+  constructor(classFunction: { new(): any }, id: number, changes: ( string | { method: string, props?: string[] })[])
+  constructor(classFunction: { new(): any }, idProps: {[ propName: string ]: any })
+  constructor(classFunction: { new(): any }, idProps: {[ propName: string ]: any }, changeMethod: string)
+  constructor(classFunction: { new(): any }, idProps: {[ propName: string ]: any }, change: { method: string, props?: string[] })
+  constructor(classFunction: { new(): any }, idProps: {[ propName: string ]: any }, changes: ( string | { method: string, props?: string[] })[])
+
   constructor(
-      entity?: string | object,
-      idPropsOrChanges?: number | {[propName: string]: any} | string|{method: string, props?: string[]} | (string|{method: string, props?: string[]})[],
-      changes?: string | {method: string, props?: string[]} | (string|{method: string, props?: string[]})[]) {
+      entity?: string | object | { new(): any },
+      idPropsOrChanges?: number | {[ propName: string ]: any } | string | { method: string, props?: string[] } | ( string | { method: string, props?: string[] })[],
+      changes?: string | { method: string, props?: string[] } | ( string | { method: string, props?: string[] })[]) {
 
     let firstParameterObject = false
     if (typeof entity === 'string') {
