@@ -7,15 +7,15 @@ describe('Change', function() {
     it('should set with a entity name', function() {
       let change = new Change('EntityName')
       expect(change.entityName).to.equal('EntityName')
-      expect(change.idProps).to.be.empty
-      expect(change.methods).to.be.empty
+      expect(change.idProps).to.be.undefined
+      expect(change.methods).to.be.undefined
     })
 
     it('should set with a entity name and idProps', function() {
       let change = new Change('EntityName', { id: 1 })
       expect(change.entityName).to.equal('EntityName')
       expect(change.idProps).to.deep.equal({ id: 1 })
-      expect(change.methods).to.be.empty
+      expect(change.methods).to.be.undefined
     })
 
     it('should set with a entity name, idProps and a method', function() {
@@ -49,43 +49,43 @@ describe('Change', function() {
     it('should set with a entity name and a method', function() {
       let change = new Change('EntityName', 'delete')
       expect(change.entityName).to.equal('EntityName')
-      expect(change.idProps).to.be.empty
+      expect(change.idProps).to.be.undefined
       expect(change.methods).to.deep.equal([{ method: 'delete' }])
     })
 
     it('should set with a entity name and a method object', function() {
       let change = new Change('EntityName', { method: 'delete' })
       expect(change.entityName).to.equal('EntityName')
-      expect(change.idProps).to.be.empty
+      expect(change.idProps).to.be.undefined
       expect(change.methods).to.deep.equal([{ method: 'delete' }])
     })
 
     it('should set with a entity name and methods string array', function() {
       let change = new Change('EntityName', [ 'delete', 'update' ])
       expect(change.entityName).to.equal('EntityName')
-      expect(change.idProps).to.be.empty
+      expect(change.idProps).to.be.undefined
       expect(change.methods).to.deep.equal([{ method: 'delete'}, { method: 'update' }])
     })
 
     it('should set with a entity name and methods mixed array', function() {
       let change = new Change('EntityName', ['delete', { method: 'update', props: [ 'property' ]}])
       expect(change.entityName).to.equal('EntityName')
-      expect(change.idProps).to.be.empty
+      expect(change.idProps).to.be.undefined
       expect(change.methods).to.deep.equal([{ method: 'delete'}, { method: 'update', props: [ 'property' ]}])
     })
 
     it('should set with a constructor function', function() {
       let change = new Change(TestEntity1)
       expect(change.entityName).to.equal('TestEntity1')
-      expect(change.idProps).to.be.empty
-      expect(change.methods).to.be.empty
+      expect(change.idProps).to.be.undefined
+      expect(change.methods).to.be.undefined
     })
 
     it('should set with a constructor function and idProps', function() {
       let change = new Change(TestEntity1, { id: 1 })
       expect(change.entityName).to.equal('TestEntity1')
       expect(change.idProps).to.deep.equal({ id: 1 })
-      expect(change.methods).to.be.empty
+      expect(change.methods).to.be.undefined
     })
 
     it('should set with a constructor function, idProps and a method', function() {
@@ -119,43 +119,43 @@ describe('Change', function() {
     it('should set with a constructor function and a method', function() {
       let change = new Change(TestEntity1, 'delete')
       expect(change.entityName).to.equal('TestEntity1')
-      expect(change.idProps).to.be.empty
+      expect(change.idProps).to.be.undefined
       expect(change.methods).to.deep.equal([{ method: 'delete' }])
     })
 
     it('should set with a constructor function and a method object', function() {
       let change = new Change(TestEntity1, { method: 'delete' })
       expect(change.entityName).to.equal('TestEntity1')
-      expect(change.idProps).to.be.empty
+      expect(change.idProps).to.be.undefined
       expect(change.methods).to.deep.equal([{ method: 'delete' }])
     })
 
     it('should set with a constructor function and methods string array', function() {
       let change = new Change(TestEntity1, [ 'delete', 'update' ])
       expect(change.entityName).to.equal('TestEntity1')
-      expect(change.idProps).to.be.empty
+      expect(change.idProps).to.be.undefined
       expect(change.methods).to.deep.equal([{ method: 'delete'}, { method: 'update' }])
     })
 
     it('should set with a constructor function and methods mixed array', function() {
       let change = new Change(TestEntity1, ['delete', { method: 'update', props: [ 'property' ]}])
       expect(change.entityName).to.equal('TestEntity1')
-      expect(change.idProps).to.be.empty
+      expect(change.idProps).to.be.undefined
       expect(change.methods).to.deep.equal([{ method: 'delete'}, { method: 'update', props: [ 'property' ]}])
     })
 
     it('should set with an entity', function() {
       let change = new Change(new TestEntity1)
       expect(change.entityName).to.equal('TestEntity1')
-      expect(change.idProps).to.be.empty
-      expect(change.methods).to.be.empty
+      expect(change.idProps).to.be.undefined
+      expect(change.methods).to.be.undefined
     })
 
     it('should set with an entity and idPropNames', function() {
       let change = new Change(new TestEntity2, [ 'id' ])
       expect(change.entityName).to.equal('TestEntity2')
       expect(change.idProps).to.deep.equal({ id: 1 })
-      expect(change.methods).to.be.empty
+      expect(change.methods).to.be.undefined
     })
 
     it('should set with an entity, idPropNames and a method', function() {
@@ -189,28 +189,28 @@ describe('Change', function() {
     it('should set with an entity and a method', function() {
       let change = new Change(new TestEntity2, 'delete')
       expect(change.entityName).to.equal('TestEntity2')
-      expect(change.idProps).to.be.empty
+      expect(change.idProps).to.be.undefined
       expect(change.methods).to.deep.equal([{ method: 'delete' }])
     })
 
     it('should set with an entity and a method object', function() {
       let change = new Change(new TestEntity2, { method: 'delete' })
       expect(change.entityName).to.equal('TestEntity2')
-      expect(change.idProps).to.be.empty
+      expect(change.idProps).to.be.undefined
       expect(change.methods).to.deep.equal([{ method: 'delete' }])
     })
 
     it('should set with an entity and methods string array', function() {
       let change = new Change(new TestEntity2, [ 'delete', 'update' ])
       expect(change.entityName).to.equal('TestEntity2')
-      expect(change.idProps).to.be.empty
+      expect(change.idProps).to.be.undefined
       expect(change.methods).to.deep.equal([{ method: 'delete'}, { method: 'update' }])
     })
 
     it('should set with an entity and methods mixed array', function() {
       let change = new Change(new TestEntity2, ['delete', { method: 'update', props: [ 'property' ]}])
       expect(change.entityName).to.equal('TestEntity2')
-      expect(change.idProps).to.be.empty
+      expect(change.idProps).to.be.undefined
       expect(change.methods).to.deep.equal([{ method: 'delete'}, { method: 'update', props: [ 'property' ]}])
     })
   })

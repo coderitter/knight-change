@@ -8,7 +8,7 @@ export class Changes {
   }
 
   add(change: Change) {
-    let idPropNames = Object.keys(change.idProps)
+    let idPropNames = change.idProps != undefined ? Object.keys(change.idProps) : []
     let alreadyAdded = false
 
     for (let existingChange of this.changes) {
@@ -16,7 +16,7 @@ export class Changes {
         continue
       }
 
-      let existingIdPropNames = Object.keys(existingChange.idProps)
+      let existingIdPropNames = existingChange.idProps != undefined  ? Object.keys(existingChange.idProps) : []
       if (idPropNames.length != existingIdPropNames.length) {
         continue
       }
@@ -29,7 +29,7 @@ export class Changes {
           break
         }
 
-        if (change.idProps[idPropName] !== existingChange.idProps[idPropName]) {
+        if (change.idProps![idPropName] !== existingChange.idProps![idPropName]) {
           idPropsDifferent = true
           break
         }
@@ -41,30 +41,36 @@ export class Changes {
 
       alreadyAdded = true
 
-      for (let method of change.methods) {
-        let methodExisting = false
-        
-        for (let existingMethod of existingChange.methods) {
-          if (existingMethod.method == method.method) {
-            methodExisting = true
+      if (change.methods != undefined ) {
+        if (existingChange.methods == undefined) {
+          existingChange.methods = []
+        }
 
-            if (method.props != undefined) {
-              for (let prop of method.props) {
-                if (existingMethod.props == undefined || existingMethod.props.indexOf(prop) == -1) {
-                  if (existingMethod.props == undefined) {
-                    existingMethod.props = []
+        for (let method of change.methods) {
+          let methodExisting = false
+          
+          for (let existingMethod of existingChange.methods) {
+            if (existingMethod.method == method.method) {
+              methodExisting = true
+  
+              if (method.props != undefined) {
+                for (let prop of method.props) {
+                  if (existingMethod.props == undefined || existingMethod.props.indexOf(prop) == -1) {
+                    if (existingMethod.props == undefined) {
+                      existingMethod.props = []
+                    }
+  
+                    existingMethod.props.push(prop)
                   }
-
-                  existingMethod.props.push(prop)
                 }
               }
             }
           }
-        }
-
-        if (! methodExisting) {
-          existingChange.methods.push(method)
-        }
+  
+          if (! methodExisting) {
+            existingChange.methods.push(method)
+          }
+        }          
       }
     }
 

@@ -14,8 +14,8 @@ export class Change {
   static readonly methods = methods
 
   entityName?: string
-  idProps: IdProps = {}
-  methods: Method[] = []
+  idProps?: IdProps
+  methods?: Method[]
   entity?: any
 
   constructor()
@@ -72,6 +72,8 @@ export class Change {
         }
         // second parameter is idPropNames
         else {
+          this.idProps = {}
+          
           for (let idPropName of arg2) {
             this.idProps[idPropName] = this.entity[idPropName]
           }
