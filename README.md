@@ -1,10 +1,10 @@
-# Mega Nice Change Event
+# Mega Nice Change
 
-A mega nice change event to describe changes in a database entity.
+A mega nice change to describe changes of entities.
 
 ## Install
 
-`npm install mega-nice-change-event`
+`npm install mega-nice-change`
 
 ## Overview
 
@@ -13,7 +13,7 @@ A mega nice change event to describe changes in a database entity.
 The journey begins when an entity changed.
 
 ```typescript
-import { ChangeDescription } from 'mega-nice-change-event'
+import { ChangeDescription } from 'mega-nice-change'
 
 let task = {
   id: 5,
