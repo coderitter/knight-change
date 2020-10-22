@@ -8,34 +8,36 @@ export interface Method {
 }
 
 export class Change {
-  entity?: string
+
+  entityName?: string
   idProps: IdProps = {}
   methods: Method[] = []
+  entity?: any
 
   constructor()
   constructor(entityName: string)
   constructor(entityName: string, id: number)
   constructor(entityName: string, id: number, method: string)
   constructor(entityName: string, id: number, method: Method)
-  constructor(entityName: string, id: number, methods: ( string | Method)[])
+  constructor(entityName: string, id: number, methods: ( string | Method )[])
   constructor(entityName: string, idProps: IdProps)
   constructor(entityName: string, idProps: IdProps, method: string)
   constructor(entityName: string, idProps: IdProps, method: Method)
-  constructor(entityName: string, idProps: IdProps, methods: ( string | Method)[])
-  constructor(object: object)
-  constructor(object: object)
-  constructor(object: object, method: string)
-  constructor(object: object, method: Method)
-  constructor(object: object, methods: ( string | Method)[])
+  constructor(entityName: string, idProps: IdProps, methods: ( string | Method )[])
+  constructor(entity: object)
+  constructor(entity: object)
+  constructor(entity: object, method: string)
+  constructor(entity: object, method: Method)
+  constructor(entity: object, methods: ( string | Method)[])
   constructor(classFunction: { new(): any })
   constructor(classFunction: { new(): any }, id: number)
   constructor(classFunction: { new(): any }, id: number, method: string)
   constructor(classFunction: { new(): any }, id: number, method: Method)
-  constructor(classFunction: { new(): any }, id: number, methods: ( string | Method)[])
+  constructor(classFunction: { new(): any }, id: number, methods: ( string | Method )[])
   constructor(classFunction: { new(): any }, idProps: IdProps)
   constructor(classFunction: { new(): any }, idProps: IdProps, method: string)
   constructor(classFunction: { new(): any }, idProps: IdProps, method: Method)
-  constructor(classFunction: { new(): any }, idProps: IdProps, methods: ( string | Method)[])
+  constructor(classFunction: { new(): any }, idProps: IdProps, methods: ( string | Method )[])
 
   constructor(arg1?: any, arg2?: any, arg3?: any) {
     let methods: string | Method | ( string | Method )[] | undefined = arg3
@@ -43,17 +45,18 @@ export class Change {
 
     // first parameter is the entityName
     if (typeof arg1 === 'string') {
-      this.entity = arg1
+      this.entityName = arg1
     }
     // first parameter is the entity object
     else if (typeof arg1 == 'object' && arg1 !== null) {
       firstParameterObject = true
-      this.entity = arg1.constructor.name
+      this.entityName = arg1.constructor.name
       this.idProps = Change.guessIds(arg1)
+      this.entity = arg1
     }
     // first parameter is the class function
     else if (typeof arg1 == 'function' && (<any> arg1).name != undefined) {
-      this.entity = (<any> arg1).name
+      this.entityName = (<any> arg1).name
     }
 
     // if the first parameter was an object it was used to extract the entity name and its id
@@ -62,7 +65,7 @@ export class Change {
       methods = arg2
     }
     else {
-      // if the change is a number it is expected that it is the id of an entity
+      // second parameter is an id
       if (typeof arg2 == 'number') {
         this.idProps = {
           id: arg2
@@ -114,7 +117,7 @@ export class Change {
       let mostSpecificChanges = []
 
       for (let change of changes) {
-        if (change.entity == this.entity && change.containsMethod(this)) {
+        if (change.entityName == this.entityName && change.containsMethod(this)) {
           mostSpecificChanges.push(change)
         }
       }
@@ -144,7 +147,7 @@ export class Change {
 
   private isEntityRelevant(change: Change): boolean {
     // if the entity names are not equal just skip it
-    if (change.entity != this.entity) {
+    if (change.entityName != this.entityName) {
       return false
     }
 
@@ -258,7 +261,7 @@ export class Change {
     }
 
     let change = new Change()
-    change.entity = object.constructor.name
+    change.entityName = object.constructor.name
     change.idProps = this.guessIds(object)
     
     if (method != undefined) {

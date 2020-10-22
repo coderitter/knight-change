@@ -6,69 +6,69 @@ describe('Change', function() {
   describe('constructor', function() {
     it('should set a string entity name', function() {
       let d = new Change('EntityName')
-      expect(d.entity).to.equal('EntityName')
+      expect(d.entityName).to.equal('EntityName')
       expect(d.idProps).to.be.empty
     })
 
     it('should set a string entity name and generate a description from a number', function() {
       let d = new Change('EntityName', 1)
-      expect(d.entity).to.equal('EntityName')
+      expect(d.entityName).to.equal('EntityName')
       expect(d.idProps).to.deep.equal({ id: 1 })
     })
 
     it('should set an entity name from an object', function() {
       let d = new Change(new TestEntity1)
-      expect(d.entity).to.equal('TestEntity1')
+      expect(d.entityName).to.equal('TestEntity1')
       expect(d.idProps).to.be.empty
     })
 
     it('should set an entity name from a class', function() {
       let d = new Change(TestEntity2)
-      expect(d.entity).to.equal('TestEntity2')
+      expect(d.entityName).to.equal('TestEntity2')
       expect(d.idProps).to.be.empty
     })
 
     it('should set an entity name from an object and auto generate the description', function() {
       let d = new Change(new TestEntity2)
-      expect(d.entity).to.equal('TestEntity2')
+      expect(d.entityName).to.equal('TestEntity2')
       expect(d.idProps).to.deep.equal({ id: 1 })
     })
 
     it('should add a change method', function() {
       let d = new Change('EntityName', 1, 'delete')
-      expect(d.entity).to.equal('EntityName')
+      expect(d.entityName).to.equal('EntityName')
       expect(d.idProps).to.deep.equal({ id: 1 })
       expect(d.methods).to.deep.equal([{ method: 'delete' }])
     })
 
     it('should add multiple change methods', function() {
       let d = new Change('EntityName', 1, ['delete', 'update'])
-      expect(d.entity).to.equal('EntityName')
+      expect(d.entityName).to.equal('EntityName')
       expect(d.idProps).to.deep.equal({ id: 1 })
       expect(d.methods).to.deep.equal([{ method: 'delete' },{ method: 'update' }])
     })
 
     it('should add a change with props', function() {
       let d = new Change('EntityName', 1, { method: 'delete', props: ['a', 'b']})
-      expect(d.entity).to.equal('EntityName')
+      expect(d.entityName).to.equal('EntityName')
       expect(d.idProps).to.deep.equal({ id: 1 })
       expect(d.methods).to.deep.equal([{ method: 'delete', props: ['a', 'b'] }])
     })
 
     it('should add multiple changes with props', function() {
       let d = new Change('EntityName', 1, [{ method: 'delete', props: ['a', 'b']}, { method: 'update', props: ['c', 'd']}])
-      expect(d.entity).to.equal('EntityName')
+      expect(d.entityName).to.equal('EntityName')
       expect(d.idProps).to.deep.equal({ id: 1 })
       expect(d.methods).to.deep.equal([{ method: 'delete', props: ['a', 'b'] }, { method: 'update', props: ['c', 'd'] }])
     })
 
     it('should add a change as the second parameter if the first one is an object', function() {
       let d1 = new Change(new TestEntity1, 'delete')
-      expect(d1.entity).to.equal('TestEntity1')
+      expect(d1.entityName).to.equal('TestEntity1')
       expect(d1.methods).to.deep.equal([{ method: 'delete' }])
 
       let d2 = new Change(new TestEntity2, 'delete')
-      expect(d2.entity).to.equal('TestEntity2')
+      expect(d2.entityName).to.equal('TestEntity2')
       expect(d2.idProps).to.deep.equal({ id: 1 })
       expect(d2.methods).to.deep.equal([{ method: 'delete' }])
     })
