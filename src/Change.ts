@@ -1,5 +1,5 @@
 export interface IdProps {
-  [ propName: string ]: any
+  [ propName: string ]: number|string|null|undefined
 }
 
 export interface Method {
@@ -16,10 +16,10 @@ export class Change {
 
   constructor()
   constructor(entityName: string)
-  constructor(entityName: string, id: number)
-  constructor(entityName: string, id: number, method: string)
-  constructor(entityName: string, id: number, method: Method)
-  constructor(entityName: string, id: number, methods: ( string | Method )[])
+  constructor(entityName: string, id: number|string|null)
+  constructor(entityName: string, id: number|string|null, method: string)
+  constructor(entityName: string, id: number|string|null, method: Method)
+  constructor(entityName: string, id: number|string|null, methods: ( string | Method )[])
   constructor(entityName: string, idProps: IdProps)
   constructor(entityName: string, idProps: IdProps, method: string)
   constructor(entityName: string, idProps: IdProps, method: Method)
@@ -28,12 +28,12 @@ export class Change {
   constructor(entity: object)
   constructor(entity: object, method: string)
   constructor(entity: object, method: Method)
-  constructor(entity: object, methods: ( string | Method)[])
+  constructor(entity: object, methods: ( string | Method )[])
   constructor(classFunction: { new(): any })
-  constructor(classFunction: { new(): any }, id: number)
-  constructor(classFunction: { new(): any }, id: number, method: string)
-  constructor(classFunction: { new(): any }, id: number, method: Method)
-  constructor(classFunction: { new(): any }, id: number, methods: ( string | Method )[])
+  constructor(classFunction: { new(): any }, id: number|string|null)
+  constructor(classFunction: { new(): any }, id: number|string|null, method: string)
+  constructor(classFunction: { new(): any }, id: number|string|null, method: Method)
+  constructor(classFunction: { new(): any }, id: number|string|null, methods: ( string | Method )[])
   constructor(classFunction: { new(): any }, idProps: IdProps)
   constructor(classFunction: { new(): any }, idProps: IdProps, method: string)
   constructor(classFunction: { new(): any }, idProps: IdProps, method: Method)
@@ -66,7 +66,7 @@ export class Change {
     }
     else {
       // second parameter is an id
-      if (typeof arg2 == 'number') {
+      if (typeof arg2 == 'number' || typeof arg2 == 'string' || arg2 === null) {
         this.idProps = {
           id: arg2
         }
