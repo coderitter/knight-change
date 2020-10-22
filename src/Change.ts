@@ -1,3 +1,5 @@
+export const methods = [ 'create', 'update', 'delete' ]
+
 export interface IdProps {
   [ propName: string ]: number|string|null|undefined
 }
@@ -9,6 +11,8 @@ export interface Method {
 
 export class Change {
 
+  static readonly methods = methods
+
   entityName?: string
   idProps: IdProps = {}
   methods: Method[] = []
@@ -16,65 +20,84 @@ export class Change {
 
   constructor()
   constructor(entityName: string)
-  constructor(entityName: string, id: number|string|null)
-  constructor(entityName: string, id: number|string|null, method: string)
-  constructor(entityName: string, id: number|string|null, method: Method)
-  constructor(entityName: string, id: number|string|null, methods: ( string | Method )[])
   constructor(entityName: string, idProps: IdProps)
   constructor(entityName: string, idProps: IdProps, method: string)
   constructor(entityName: string, idProps: IdProps, method: Method)
   constructor(entityName: string, idProps: IdProps, methods: ( string | Method )[])
-  constructor(entity: object)
-  constructor(entity: object)
-  constructor(entity: object, method: string)
-  constructor(entity: object, method: Method)
-  constructor(entity: object, methods: ( string | Method )[])
+  constructor(entityName: string, method: string)
+  constructor(entityName: string, method: Method)
+  constructor(entityName: string, methods: ( string | Method )[])
   constructor(classFunction: { new(): any })
-  constructor(classFunction: { new(): any }, id: number|string|null)
-  constructor(classFunction: { new(): any }, id: number|string|null, method: string)
-  constructor(classFunction: { new(): any }, id: number|string|null, method: Method)
-  constructor(classFunction: { new(): any }, id: number|string|null, methods: ( string | Method )[])
   constructor(classFunction: { new(): any }, idProps: IdProps)
   constructor(classFunction: { new(): any }, idProps: IdProps, method: string)
   constructor(classFunction: { new(): any }, idProps: IdProps, method: Method)
   constructor(classFunction: { new(): any }, idProps: IdProps, methods: ( string | Method )[])
+  constructor(classFunction: { new(): any }, method: string)
+  constructor(classFunction: { new(): any }, method: Method)
+  constructor(classFunction: { new(): any }, methods: ( string | Method )[])
+  constructor(entity: object)
+  constructor(entity: object, idPropNames: string[])
+  constructor(entity: object, idPropNames: string[], method: string)
+  constructor(entity: object, idPropNames: string[], method: Method)
+  constructor(entity: object, idPropNames: string[], methods: ( string | Method )[])
+  constructor(entity: object, method: string)
+  constructor(entity: object, method: Method)
+  constructor(entity: object, methods: ( string | Method )[])
 
   constructor(arg1?: any, arg2?: any, arg3?: any) {
     let methods: string | Method | ( string | Method )[] | undefined = arg3
-    let firstParameterObject = false
+    let firstParameterIsEntity = false
 
-    // first parameter is the entityName
+    // first parameter is entityName
     if (typeof arg1 === 'string') {
       this.entityName = arg1
     }
-    // first parameter is the entity object
+    // first parameter is entity
     else if (typeof arg1 == 'object' && arg1 !== null) {
-      firstParameterObject = true
+      firstParameterIsEntity = true
       this.entityName = arg1.constructor.name
-      this.idProps = Change.guessIds(arg1)
       this.entity = arg1
     }
-    // first parameter is the class function
+    // first parameter is classFunction
     else if (typeof arg1 == 'function' && (<any> arg1).name != undefined) {
       this.entityName = (<any> arg1).name
     }
 
-    // if the first parameter was an object it was used to extract the entity name and its id
-    // that means that the next parameter is supposed to be methods
-    if (firstParameterObject) {
-      methods = arg2
-    }
-    else {
-      // second parameter is an id
-      if (typeof arg2 == 'number' || typeof arg2 == 'string' || arg2 === null) {
-        this.idProps = {
-          id: arg2
+    if (firstParameterIsEntity) {
+      // if the second parameter is an array it may be idPropNames or methods
+      if (arg2 instanceof Array && arg2.length > 0) {
+        // second parameter is methods
+        if (Change.methods.indexOf(arg2[0]) > -1) {
+          methods = arg2
+        }
+        // second parameter is idPropNames
+        else {
+          for (let idPropName of arg2) {
+            this.idProps[idPropName] = this.entity[idPropName]
+          }
         }
       }
-      // second parameter is an idProps object
-      else if (typeof arg2 == 'object' && arg2 !== null && ! (arg2 instanceof Array) && arg2.method == undefined) {
-        this.idProps = arg2
-      }  
+      // second parameter is method
+      else {
+        methods = arg2
+      }
+    }
+    else {
+      // second parameter is method
+      if (typeof arg2 == 'string' || arg2 instanceof Array) {
+        methods = arg2
+      }
+      // if the second parameter is an object it may be idProps or method
+      else if (typeof arg2 == 'object' && typeof arg2 !== null) {
+        // second parameter is method
+        if ('method' in arg2) {
+          methods = arg2
+        }
+        // second parameter id idProps
+        else {
+          this.idProps = arg2
+        }
+      }
     }
 
     if (methods != undefined) {
@@ -253,47 +276,5 @@ export class Change {
     }
 
     return false
-  }
-
-  static fromObject(object: any, method?: string, props?: string[]): Change|undefined {
-    if (typeof object !== 'object' || object === null) {
-      return
-    }
-
-    let change = new Change()
-    change.entityName = object.constructor.name
-    change.idProps = this.guessIds(object)
-    
-    if (method != undefined) {
-      let chg: Method = {
-        method: method
-      }
-
-      if (props != undefined && props.length > 0) {
-        chg.props = props
-      }
-
-      change.methods.push(chg)
-    }
-
-    return change
-  }
-
-  static guessIds(object: any): {[propName: string]: any} {
-    if (typeof object !== 'object' || object === null) {
-      return {}
-    }
-
-    let description: any = {}
-    
-    for (let prop in object) {
-      if (Object.prototype.hasOwnProperty.call(object, prop)) {
-        if (prop == 'id' || prop.length > 2 && prop.lastIndexOf('Id') == prop.length - 2) {
-          description[prop] = object[prop]
-        }
-      }
-    }
-
-    return description
   }
 }
