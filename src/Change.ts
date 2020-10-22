@@ -116,7 +116,7 @@ export class Change {
       let mostSpecificChanges = []
 
       for (let change of changes) {
-        if (change.entity == this.entity && change.containsChangeMethod(this)) {
+        if (change.entity == this.entity && change.containsMethod(this)) {
           mostSpecificChanges.push(change)
         }
       }
@@ -132,11 +132,11 @@ export class Change {
         continue
       }
 
-      if (! this.isIdPropsRelevant(change)) {
+      if (! this.areIdPropsRelevant(change)) {
         continue
       }
 
-      if (this.isChangesRelevant(change)) {
+      if (this.areMethodsRelevant(change)) {
         return true
       }
     }
@@ -153,7 +153,7 @@ export class Change {
     return true
   }
 
-  private isIdPropsRelevant(change: Change): boolean {
+  private areIdPropsRelevant(change: Change): boolean {
     // if one of the idProps is undefined or null then it wants to be relevant for with anything
     if (this.idProps == undefined || change.idProps == undefined) {
       return true
@@ -188,7 +188,7 @@ export class Change {
     return true
   }
 
-  isChangesRelevant(change: Change): boolean {
+  areMethodsRelevant(change: Change): boolean {
     // if one of the changes is undefined or null then it wants it is relevant
     // because it was kept unspecific so that it is relevant in any way
     if (this.methods == undefined || change.methods == undefined) {
@@ -240,7 +240,7 @@ export class Change {
     return false
   }
 
-  private containsChangeMethod(change: Change): boolean {
+  private containsMethod(change: Change): boolean {
     if (change.methods instanceof Array && this.methods instanceof Array) {
       for (let method of change.methods) {
         for (let thisChange of this.methods) {
