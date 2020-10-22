@@ -37,42 +37,40 @@ export class Change {
   constructor(classFunction: { new(): any }, idProps: IdProps, method: Method)
   constructor(classFunction: { new(): any }, idProps: IdProps, methods: ( string | Method)[])
 
-  constructor(
-      entity?: string | object | { new(): any },
-      idPropsOrMethods?: number | IdProps | string | Method | ( string | Method)[],
-      methods?: string | Method | ( string | Method)[]) {
-
+  constructor(arg1?: any, arg2?: any, arg3?: any) {
+    let methods: string | Method | ( string | Method )[] | undefined = arg3
     let firstParameterObject = false
-    if (typeof entity === 'string') {
-      this.entity = entity
+
+    // first parameter is the entityName
+    if (typeof arg1 === 'string') {
+      this.entity = arg1
     }
-    else if (typeof entity === 'object' && entity !== null) {
+    // first parameter is the entity object
+    else if (typeof arg1 == 'object' && arg1 !== null) {
       firstParameterObject = true
-      this.entity = entity.constructor.name
-
-      this.idProps = Change.guessIds(entity)
+      this.entity = arg1.constructor.name
+      this.idProps = Change.guessIds(arg1)
     }
-    // class function
-    else if (typeof entity === 'function' && (<any> entity).name != undefined) {
-      this.entity = (<any> entity).name
+    // first parameter is the class function
+    else if (typeof arg1 == 'function' && (<any> arg1).name != undefined) {
+      this.entity = (<any> arg1).name
     }
 
-    if (firstParameterObject) {
     // if the first parameter was an object it was used to extract the entity name and its id
-    // that means that the next parameter is supposed to be changes
-      methods = idPropsOrMethods as any
+    // that means that the next parameter is supposed to be methods
+    if (firstParameterObject) {
+      methods = arg2
     }
     else {
-      if (typeof idPropsOrMethods === 'number') {
-        // if the change is a number it is expected that it is the id of an entity
+      // if the change is a number it is expected that it is the id of an entity
+      if (typeof arg2 == 'number') {
         this.idProps = {
-          id: idPropsOrMethods
+          id: arg2
         }
       }
-      else if (typeof idPropsOrMethods === 'object' && idPropsOrMethods !== null && ! (idPropsOrMethods instanceof Array)) {
-        if (idPropsOrMethods.method == undefined) {
-          this.idProps = idPropsOrMethods
-        }
+      // second parameter is an idProps object
+      else if (typeof arg2 == 'object' && arg2 !== null && ! (arg2 instanceof Array) && arg2.method == undefined) {
+        this.idProps = arg2
       }  
     }
 
@@ -81,22 +79,22 @@ export class Change {
         this.methods = []
       }
 
-      if (typeof methods === 'string') {
+      if (typeof methods == 'string') {
         this.methods.push({ method: methods })
       }
       else if (methods instanceof Array) {
         for (let change of methods) {
-          if (typeof change === 'string') {
+          if (typeof change == 'string') {
             this.methods.push({ method: change })
           }
-          else if (typeof change === 'object' && change !== null) {
+          else if (typeof change == 'object' && change !== null) {
             if (change.method != undefined) {
               this.methods.push(change)
             }
           }
         }
       }  
-      else if (typeof methods === 'object' && methods !== null) {
+      else if (typeof methods == 'object' && methods !== null) {
         if (methods.method != undefined) {
           this.methods.push(methods)
         }
