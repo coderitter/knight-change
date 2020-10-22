@@ -50,11 +50,7 @@ export class Change {
       firstParameterObject = true
       this.entity = entity.constructor.name
 
-      if ((<any> entity).id != undefined) {
-        this.idProps = {
-          id: (<any> entity).id
-        }
-      }
+      this.idProps = Change.guessIds(entity)
     }
     // class function
     else if (typeof entity === 'function' && (<any> entity).name != undefined) {
