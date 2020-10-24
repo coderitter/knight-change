@@ -1,9 +1,5 @@
 export const methods = [ 'create', 'update', 'delete' ]
 
-export interface IdProps {
-  [ propName: string ]: number|string|null|undefined
-}
-
 export interface Method {
   method: string
   props?: string[]
@@ -14,91 +10,66 @@ export class Change {
   static readonly methods = methods
 
   entityName?: string
-  idProps?: IdProps
-  methods?: Method[]
   entity?: any
+  methods?: Method[]
 
   constructor()
+  constructor(entity: object)
+  constructor(entity: object, method: string)
+  constructor(entity: object, method: Method)
+  constructor(entity: object, methods: ( string | Method )[])
   constructor(entityName: string)
-  constructor(entityName: string, idProps: IdProps)
-  constructor(entityName: string, idProps: IdProps, method: string)
-  constructor(entityName: string, idProps: IdProps, method: Method)
-  constructor(entityName: string, idProps: IdProps, methods: ( string | Method )[])
+  constructor(entityName: string, entity: object)
+  constructor(entityName: string, entity: object, method: string)
+  constructor(entityName: string, entity: object, method: Method)
+  constructor(entityName: string, entity: object, methods: ( string | Method )[])
   constructor(entityName: string, method: string)
   constructor(entityName: string, method: Method)
   constructor(entityName: string, methods: ( string | Method )[])
   constructor(classFunction: { new(): any })
-  constructor(classFunction: { new(): any }, idProps: IdProps)
-  constructor(classFunction: { new(): any }, idProps: IdProps, method: string)
-  constructor(classFunction: { new(): any }, idProps: IdProps, method: Method)
-  constructor(classFunction: { new(): any }, idProps: IdProps, methods: ( string | Method )[])
+  constructor(classFunction: { new(): any }, entity: object)
+  constructor(classFunction: { new(): any }, entity: object, method: string)
+  constructor(classFunction: { new(): any }, entity: object, method: Method)
+  constructor(classFunction: { new(): any }, entity: object, methods: ( string | Method )[])
   constructor(classFunction: { new(): any }, method: string)
   constructor(classFunction: { new(): any }, method: Method)
   constructor(classFunction: { new(): any }, methods: ( string | Method )[])
-  constructor(entity: object)
-  constructor(entity: object, idPropNames: string[])
-  constructor(entity: object, idPropNames: string[], method: string)
-  constructor(entity: object, idPropNames: string[], method: Method)
-  constructor(entity: object, idPropNames: string[], methods: ( string | Method )[])
-  constructor(entity: object, method: string)
-  constructor(entity: object, method: Method)
-  constructor(entity: object, methods: ( string | Method )[])
 
   constructor(arg1?: any, arg2?: any, arg3?: any) {
     let methods: string | Method | ( string | Method )[] | undefined = arg3
     let firstParameterIsEntity = false
 
-    // first parameter is entityName
-    if (typeof arg1 === 'string') {
-      this.entityName = arg1
-    }
     // first parameter is entity
-    else if (typeof arg1 == 'object' && arg1 !== null) {
+    if (typeof arg1 == 'object' && arg1 !== null) {
       firstParameterIsEntity = true
       this.entityName = arg1.constructor.name
       this.entity = arg1
+    }
+    // first parameter is entityName
+    else if (typeof arg1 == 'string') {
+      this.entityName = arg1
     }
     // first parameter is classFunction
     else if (typeof arg1 == 'function' && (<any> arg1).name != undefined) {
       this.entityName = (<any> arg1).name
     }
-
-    if (firstParameterIsEntity) {
-      // if the second parameter is an array it may be idPropNames or methods
-      if (arg2 instanceof Array && arg2.length > 0) {
-        // second parameter is methods
-        if (Change.methods.indexOf(arg2[0]) > -1) {
-          methods = arg2
-        }
-        // second parameter is idPropNames
-        else {
-          this.idProps = {}
-          
-          for (let idPropName of arg2) {
-            this.idProps[idPropName] = this.entity[idPropName]
-          }
-        }
-      }
-      // second parameter is method
-      else {
-        methods = arg2
-      }
-    }
     else {
+      throw new TypeError('First argument was neither an entity object nor an entity name nor a class function')
+    }
+
+    // second parameter is method
+    if (typeof arg2 == 'string' || arg2 instanceof Array) {
+      methods = arg2
+    }
+    // if the second parameter is an object it may be idProps or method
+    else if (typeof arg2 == 'object' && typeof arg2 !== null) {
       // second parameter is method
-      if (typeof arg2 == 'string' || arg2 instanceof Array) {
+      if ('method' in arg2 && Object.keys(arg2).length == 1 || 'method' in arg2 && 'props' in arg2 && Object.keys(arg2).length == 2) {
         methods = arg2
       }
-      // if the second parameter is an object it may be idProps or method
-      else if (typeof arg2 == 'object' && typeof arg2 !== null) {
-        // second parameter is method
-        if ('method' in arg2) {
-          methods = arg2
-        }
-        // second parameter id idProps
-        else {
-          this.idProps = arg2
-        }
+      // second parameter id entity
+      else {
+        this.entity = arg2
       }
     }
 
@@ -158,7 +129,7 @@ export class Change {
         continue
       }
 
-      if (! this.areIdPropsRelevant(change)) {
+      if (! this.arePropsOnEntityRelevant(change)) {
         continue
       }
 
@@ -179,33 +150,33 @@ export class Change {
     return true
   }
 
-  private areIdPropsRelevant(change: Change): boolean {
-    // if one of the idProps is undefined or null then it wants to be relevant for with anything
-    if (this.idProps == undefined || change.idProps == undefined) {
+  private arePropsOnEntityRelevant(change: Change): boolean {
+    // if one of the entities is undefined or null then it wants to be always relevant
+    if (this.entity == undefined || change.entity == undefined) {
       return true
     }
 
-    // if the idProps have a different type than object then there is something wrong
-    if (typeof this.idProps !== 'object' || typeof change.idProps !== 'object') {
+    // if the entities have a different type than object then there is something wrong
+    if (typeof this.entity !== 'object' || typeof change.entity !== 'object') {
       return false
     }
 
     // if one of the idProps does not contain any key then it wants to be relevant for with anything
-    if (Object.keys(this.idProps).length == 0 || Object.keys(change.idProps).length == 0) {
+    if (Object.keys(this.entity).length == 0 || Object.keys(change.entity).length == 0) {
       return true
     }
 
-    for (let prop in change.idProps) {
-      if (Object.prototype.hasOwnProperty.call(change.idProps, prop)) {
+    for (let prop in change.entity) {
+      if (Object.prototype.hasOwnProperty.call(change.entity, prop)) {
         // if the property on the given idProps is not present in this change
         // we think it is not relevant. for example if the parentId is missing on this
         // change then it cannot be relevant for the given change expecting
         // the parentId to be something specific.
-        if (! (prop in this.idProps)) {
+        if (! (prop in this.entity)) {
           return false
         }
         
-        if (change.idProps[prop] !== this.idProps[prop]) {
+        if (change.entity[prop] !== this.entity[prop]) {
           return false
         }
       }

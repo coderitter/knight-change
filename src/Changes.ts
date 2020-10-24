@@ -8,7 +8,6 @@ export class Changes {
   }
 
   add(change: Change) {
-    let idPropNames = change.idProps != undefined ? Object.keys(change.idProps) : []
     let alreadyAdded = false
 
     for (let existingChange of this.changes) {
@@ -16,27 +15,35 @@ export class Changes {
         continue
       }
 
-      let existingIdPropNames = existingChange.idProps != undefined  ? Object.keys(existingChange.idProps) : []
-      if (idPropNames.length != existingIdPropNames.length) {
-        continue
-      }
-
-      let idPropsDifferent = false
-
-      for (let idPropName of idPropNames) {
-        if (existingIdPropNames.indexOf(idPropName) == -1) {
-          idPropsDifferent = true
-          break
+      if (existingChange.entity !== change.entity) {
+        if (existingChange.entity == undefined || change.entity == undefined) {
+          continue
         }
 
-        if (change.idProps![idPropName] !== existingChange.idProps![idPropName]) {
-          idPropsDifferent = true
-          break
-        }
-      }
+        let props = Object.keys(change.entity)
+        let existingProps = Object.keys(existingChange.entity)
 
-      if (idPropsDifferent) {
-        continue
+        if (existingProps.length != props.length) {
+          continue
+        }
+
+        let propsEqual = true
+        
+        for (let existingProp of existingProps) {
+          if (! (existingProp in change.entity)) {
+            propsEqual = false
+            break
+          }
+
+          if (existingChange.entity[existingProp] !== change.entity[existingProp]) {
+            propsEqual = false
+            break
+          }
+        }
+
+        if (! propsEqual) {
+          continue
+        }
       }
 
       alreadyAdded = true
