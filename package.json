@@ -1,6 +1,6 @@
 {
   "name": "mega-nice-change",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "A mega nice change",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

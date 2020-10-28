@@ -237,7 +237,7 @@ export class Change {
     return false
   }
 
-  private containsMethod(change: Change): boolean {
+  containsMethod(change: Change): boolean {
     if (change.methods instanceof Array && this.methods instanceof Array) {
       for (let method of change.methods) {
         for (let thisChange of this.methods) {
