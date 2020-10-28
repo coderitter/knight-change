@@ -400,6 +400,22 @@ describe('Change', function() {
       expect(result4).to.equal(true)
     })
   })
+
+  describe('containsMethod', function() {
+    it('should return true if the method is contained', function() {
+      expect(new Change('A', 'delete').containsMethod('delete')).to.be.true
+      expect(new Change('A', [ 'delete', 'update' ]).containsMethod('delete')).to.be.true
+      expect(new Change('A', [{ method: 'delete' }, { method: 'update', props: ['a'] }]).containsMethod('delete')).to.be.true
+      expect(new Change('A', [{ method: 'delete' }, { method: 'update', props: ['a'] }]).containsMethod('update')).to.be.true
+    })
+
+    it('should return false if the method is not contained', function() {
+      expect(new Change('A', 'delete').containsMethod('create')).to.be.false
+      expect(new Change('A', [ 'delete', 'update' ]).containsMethod('create')).to.be.false
+      expect(new Change('A', [{ method: 'delete' }, { method: 'update', props: ['a'] }]).containsMethod('create')).to.be.false
+      expect(new Change('A', [{ method: 'delete' }, { method: 'update', props: ['a'] }]).containsMethod('create')).to.be.false
+    })
+  })
 })
 
 class TestEntity1 {}

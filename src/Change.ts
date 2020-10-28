@@ -101,6 +101,49 @@ export class Change {
     }
   }
 
+  containsMethod(change: Change): boolean
+  containsMethod(method: string[]): boolean
+  containsMethod(method: string): boolean
+
+  containsMethod(arg1: any): boolean {
+    if (arg1 instanceof Change) {
+      let change = arg1
+      
+      if (change.methods instanceof Array && this.methods instanceof Array) {
+        for (let method of change.methods) {
+          for (let thisChange of this.methods) {
+            if (method.method != undefined && method.method === thisChange.method) {
+              return true
+            }
+          }
+        }
+      }
+    }
+    
+    else {
+      let methods: string[]|undefined = undefined
+
+      if (arg1 instanceof Array) {
+        methods = arg1
+      }
+      else {
+        methods = [ arg1 ]
+      }
+
+      if (methods instanceof Array && this.methods instanceof Array) {
+        for (let method of methods) {
+          for (let thisChange of this.methods) {
+            if (method != undefined && method === thisChange.method) {
+              return true
+            }
+          }
+        }
+      }
+    }
+
+    return false
+  }
+
   isRelevantFor(changes: Change|Change[]): boolean {
     if (changes instanceof Change) {
       changes = [ changes ]
@@ -185,7 +228,7 @@ export class Change {
     return true
   }
 
-  areMethodsRelevant(change: Change): boolean {
+  private areMethodsRelevant(change: Change): boolean {
     // if one of the changes is undefined or null then it wants it is relevant
     // because it was kept unspecific so that it is relevant in any way
     if (this.methods == undefined || change.methods == undefined) {
@@ -234,20 +277,6 @@ export class Change {
     }
 
     // if there was not equal prop it is not relevant
-    return false
-  }
-
-  containsMethod(change: Change): boolean {
-    if (change.methods instanceof Array && this.methods instanceof Array) {
-      for (let method of change.methods) {
-        for (let thisChange of this.methods) {
-          if (method.method != undefined && method.method === thisChange.method) {
-            return true
-          }
-        }
-      }
-    }
-
     return false
   }
 }
