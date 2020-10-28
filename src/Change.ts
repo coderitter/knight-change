@@ -101,42 +101,42 @@ export class Change {
     }
   }
 
-  containsMethod(change: Change): boolean
-  containsMethod(method: string[]): boolean
   containsMethod(method: string): boolean
+  containsMethod(method: Method): boolean
 
   containsMethod(arg1: any): boolean {
-    if (arg1 instanceof Change) {
-      let change = arg1
-      
-      if (change.methods instanceof Array && this.methods instanceof Array) {
-        for (let method of change.methods) {
-          for (let thisChange of this.methods) {
-            if (method.method != undefined && method.method === thisChange.method) {
-              return true
-            }
-          }
-        }
-      }
+    if (this.methods == undefined || this.methods.length == 0) {
+      return false
+    }
+
+    let method: string
+    let props: string[]|undefined = undefined
+
+    if (typeof arg1 == 'string') {
+      method = arg1
+    }
+    else {
+      method = arg1.method
+      props = arg1.props
     }
     
-    else {
-      let methods: string[]|undefined = undefined
+    for (let thisMethod of this.methods) {
+      if (method != undefined && method === thisMethod.method) {
+        if (props != undefined) {
+          if (thisMethod.props == undefined) {
+            return false
+          }
 
-      if (arg1 instanceof Array) {
-        methods = arg1
-      }
-      else {
-        methods = [ arg1 ]
-      }
-
-      if (methods instanceof Array && this.methods instanceof Array) {
-        for (let method of methods) {
-          for (let thisChange of this.methods) {
-            if (method != undefined && method === thisChange.method) {
-              return true
+          for (let prop of props) {
+            if (thisMethod.props.indexOf(prop) == -1) {
+              return false
             }
           }
+
+          return true
+        }
+        else {
+          return true
         }
       }
     }
@@ -156,7 +156,7 @@ export class Change {
       let mostSpecificChanges = []
 
       for (let change of changes) {
-        if (change.entityName == this.entityName && change.containsMethod(this)) {
+        if (change.entityName == this.entityName && change.containsAtLeastOneMethod(this)) {
           mostSpecificChanges.push(change)
         }
       }
@@ -168,11 +168,11 @@ export class Change {
 
     for (let change of changes) {
       // if the entity name is not relevant just skip it
-      if (! this.isEntityRelevant(change)) {
+      if (! this.isEntityNameRelevant(change)) {
         continue
       }
 
-      if (! this.arePropsOnEntityRelevant(change)) {
+      if (! this.isEntityRelevant(change)) {
         continue
       }
 
@@ -184,7 +184,7 @@ export class Change {
     return false
   }
 
-  private isEntityRelevant(change: Change): boolean {
+  private isEntityNameRelevant(change: Change): boolean {
     // if the entity names are not equal just skip it
     if (change.entityName != this.entityName) {
       return false
@@ -193,7 +193,7 @@ export class Change {
     return true
   }
 
-  private arePropsOnEntityRelevant(change: Change): boolean {
+  private isEntityRelevant(change: Change): boolean {
     // if one of the entities is undefined or null then it wants to be always relevant
     if (this.entity == undefined || change.entity == undefined) {
       return true
@@ -204,7 +204,7 @@ export class Change {
       return false
     }
 
-    // if one of the idProps does not contain any key then it wants to be relevant for with anything
+    // if one of the entity does not contain any key then it wants to be relevant for with anything
     if (Object.keys(this.entity).length == 0 || Object.keys(change.entity).length == 0) {
       return true
     }
@@ -277,6 +277,20 @@ export class Change {
     }
 
     // if there was not equal prop it is not relevant
+    return false
+  }
+
+  private containsAtLeastOneMethod(change: Change): boolean {
+    if (change.methods instanceof Array && this.methods instanceof Array) {
+      for (let method of change.methods) {
+        for (let thisMethod of this.methods) {
+          if (method.method != undefined && method.method === thisMethod.method) {
+            return true
+          }
+        }
+      }
+    }
+
     return false
   }
 }

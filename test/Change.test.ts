@@ -407,13 +407,19 @@ describe('Change', function() {
       expect(new Change('A', [ 'delete', 'update' ]).containsMethod('delete')).to.be.true
       expect(new Change('A', [{ method: 'delete' }, { method: 'update', props: ['a'] }]).containsMethod('delete')).to.be.true
       expect(new Change('A', [{ method: 'delete' }, { method: 'update', props: ['a'] }]).containsMethod('update')).to.be.true
+      expect(new Change('A', [{ method: 'delete' }, { method: 'update', props: ['a'] }]).containsMethod({ method: 'update', props: ['a'] })).to.be.true
+      expect(new Change('A', [{ method: 'delete' }, { method: 'update', props: ['a', 'b'] }]).containsMethod({ method: 'update', props: ['a', 'b'] })).to.be.true
     })
 
     it('should return false if the method is not contained', function() {
       expect(new Change('A', 'delete').containsMethod('create')).to.be.false
       expect(new Change('A', [ 'delete', 'update' ]).containsMethod('create')).to.be.false
+      expect(new Change('A', 'update').containsMethod({ method: 'update', props: ['b'] })).to.be.false
       expect(new Change('A', [{ method: 'delete' }, { method: 'update', props: ['a'] }]).containsMethod('create')).to.be.false
       expect(new Change('A', [{ method: 'delete' }, { method: 'update', props: ['a'] }]).containsMethod('create')).to.be.false
+      expect(new Change('A', [{ method: 'delete' }, { method: 'update', props: ['a'] }]).containsMethod({ method: 'update', props: ['b'] })).to.be.false
+      expect(new Change('A', [{ method: 'delete' }, { method: 'update', props: ['a'] }]).containsMethod({ method: 'update', props: ['a', 'b'] })).to.be.false
+      expect(new Change('A', [{ method: 'delete' }, { method: 'update', props: ['a', 'b'] }]).containsMethod({ method: 'update', props: ['a', 'b', 'c'] })).to.be.false
     })
   })
 })
