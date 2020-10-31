@@ -13,6 +13,12 @@ export class Change {
   entity?: any
   methods?: Method[]
 
+  get method(): Method|undefined {
+    if (this.methods != undefined && this.methods.length > 0) {
+      return this.methods[0]
+    }
+  }
+
   constructor()
   constructor(entity: object)
   constructor(entity: object, method: string)
