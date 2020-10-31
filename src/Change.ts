@@ -19,6 +19,15 @@ export class Change {
     }
   }
 
+  set method(method: Method|undefined) {
+    if (method == undefined) {
+      this.methods = undefined
+    }
+    else {
+      this.methods = [ method ]
+    }
+  }
+
   constructor()
   constructor(entity: object)
   constructor(entity: object, method: string)
