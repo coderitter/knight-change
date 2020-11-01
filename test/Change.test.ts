@@ -4,6 +4,13 @@ import { Change } from '../src/Change'
 
 describe('Change', function() {
   describe('constructor', function() {
+    it('should accept parameter-less', function() {
+      let change = new Change
+      expect(change.entityName).to.be.undefined
+      expect(change.entity).to.be.undefined
+      expect(change.methods).to.be.undefined
+    })
+
     it('should set with a entity name', function() {
       let change = new Change('EntityName')
       expect(change.entityName).to.equal('EntityName')

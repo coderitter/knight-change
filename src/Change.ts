@@ -51,6 +51,10 @@ export class Change {
   constructor(classFunction: { new(): any }, methods: ( string | Method )[])
 
   constructor(arg1?: any, arg2?: any, arg3?: any) {
+    if (arg1 === undefined) {
+      return
+    }
+
     let methods: string | Method | ( string | Method )[] | undefined = arg3
     let firstParameterIsEntity = false
 
@@ -76,7 +80,7 @@ export class Change {
     if (typeof arg2 == 'string' || arg2 instanceof Array) {
       methods = arg2
     }
-    // if the second parameter is an object it may be idProps or method
+    // if the second parameter is an object it may be the entity or the method
     else if (typeof arg2 == 'object' && typeof arg2 !== null) {
       // second parameter is method
       if ('method' in arg2 && Object.keys(arg2).length == 1 || 'method' in arg2 && 'props' in arg2 && Object.keys(arg2).length == 2) {
