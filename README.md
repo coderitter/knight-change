@@ -1,173 +1,163 @@
 # Mega Nice Change
 
-A mega nice change to describe changes of entities.
+A data structure to describe and match changes.
 
 ## Install
 
-`npm install mega-nice-change`
+`npm install knight-change`
 
 ## Overview
 
-### Describe a change using an entity that changed
+There is a `Change` class which is used for describing a change and to describe a listener which wants to react to certain changes.
 
-The journey begins when an entity changed.
+### Describe a change
 
-```typescript
-import { ChangeDescription } from 'mega-nice-change'
-
-let task = {
-  id: 5,
-  parentId: 33,
-  userId: 12
-  title: 'Clean up room'
-}
-
-let change = ChangeDescription.fullDescription(task, 'update', ['title'])
-
-change == {
-  entity: 'Task',
-
-  idProps: {
-    id: 5,
-    parentId: 33,
-    userId: 12
-  },
-
-  changes: [{
-    method: 'update',
-    props: ['title']
-  }]
-}
-```
-
-The static method `fullDescription` will create a full description of the changed object.
-
-- `entity`: The entity name which basically is the class name but in this context we want to think about the changed thing as a database entity.
-- `idProps`: Contains any property which identifies the entity. It includes any property named `id` or ending with `Id`.
-- `changes`: An array of changes which consists of a change `method` and changed `props`.
-
-If you need different behaviour you can either take the output of this method as a starting point or you just write your own.
-
-### Describe a change that should be relevant
-
-Now that you described a change there are change listeners who would like to decide if a change is relevant for them or not. You do that by describing a change which acts as a template for any incoming change description. Let the code talk.
+A change object consists of the entity that changed, the name of that entity and one of the methods create, update or delete.
 
 ```typescript
-// listen to any change of any tasks
-let listener1 = {
-  entity: 'Task'
-}
+import { Change } from 'knight-change'
 
-// listen to any change of a task with id 5
-let listener2 = {
-  entity: 'Task',
-  idProps: { id: 5 }
-}
+/* a new task is created */
+let task = new Task
+task.id = 5,
+task.title = 'Clean up room'
 
-// listen to any update change of a task with id 5
-let listener3 = {
-  entity: 'Task',
-  idProps: { id: 5 },
-  changes: { method: 'update' }
-}
+let createChange = new Change(task, 'create')
 
-// listen to any title update change of a task with id 5
-let listener4 = {
-  entity: 'Task',
-  idProps: { id: 5 },
-  changes: { method: 'update', props: ['title'] }
-}
+createChange.entityName == 'Task'
+createChange.entity == { id: 5, title: 'Clean up room' }
+createChange.method == { method: 'create' }
 
-// listen to any title update change of any task
-let listener4 = {
-  entity: 'Task',
-  changes: { method: 'update', props: ['title'] }
-}
+/* the task is updated */
+task.title = 'Clean up room and do homework'
 
-// listen to any parentId or userId update change of the task with id 5
-let listener5 = {
-  entity: 'Task',
-  idProps: { id: 5 },
-  changes: { method: 'update', props: ['parentId', 'userId'] }
-}
+let updateChange = new Change(task, { method: 'update', props: ['title'] })
 
-// listen to any delete change of any task with a userId of 12
-let listener5 = {
-  entity: 'Task',
-  idProps: { userId: 12 },
-  changes: { method: 'delete' }
-}
+updateChange.entityName == 'Task'
+updateChange.entity = { id: 5, title: 'Clean up room and do homework' }
+// if we describe an update change we can add the information which properties changed
+updateChange.method = { method: 'update', props: ['title'] }
+
+/* the task is deleted */
+task = undefined
+
+let deleteChange = new Change(task, 'delete')
+
+deleteChange.entityName == 'Task'
+deleteChange.entity = { id: 5, title: 'Clean up room and do homework' }
+deleteChange.method = { method: 'delete' }
 ```
 
-As you can see, you are able to determine fine grained changes that listeners should react to.
+### Describe a change listener that wants to react on certain changes
 
-Use method `isRelevantFor` to find out if a change is relevant for a listener.
+```typescript
+/* listen to any change of any task */
+new Change(Task)
+new Change('Task')
+
+/* listen to any change of a task with id 5 */
+new Change(Task, { id: 5 })
+new Change('Task', { id: 5 })
+new Change(new Task(5))
+
+/* listen to any update of a task with id 5 */
+new Change(Task, { id: 5 }, 'update')
+new Change('Task', { id: 5 }, 'update')
+new Change(new Task(5), 'update')
+
+/* listen to any title update of a task with id 5 */
+new Change(Task, { id: 5 }, { method: 'update', props: ['title'] })
+new Change('Task', { id: 5 }, { method: 'update', props: ['title'] })
+new Change(new Task(5), { method: 'update', props: ['title'] })
+
+/* listen to any title update of any task */
+new Change(Task, { method: 'update', props: ['title'] })
+new Change('Task', { method: 'update', props: ['title'] })
+
+/* listen to any title update or deletion of any task */
+new Change(Task, ['delete', { method: 'update', props: ['title'] }])
+new Change('Task', ['delete', { method: 'update', props: ['title'] }])
+
+/* listen to any title update or deletion of task with id 5 */
+new Change(Task, { id: 5 }, ['delete', { method: 'update', props: ['title'] }])
+new Change('Task', { id: 5 }, ['delete', { method: 'update', props: ['title'] }])
+new Change(new Task(5), ['delete', { method: 'update', props: ['title'] }])
+```
+
+### Check if a change is relevant for a listener
 
 ```typescript
 change.isRelevantFor(listener)
+
+let listeners = [ listener1, listener2, listener3 ]
+change.isRelevantFor(listeners)
 ```
 
-### Using ChangeEvent
+### Combine multiple changes
 
-To be able to describe numerous changes at once you can use the `ChangeEvent` class.
+To combine multiple changes you can use the class `Changes`.
 
 ```typescript
-let event = new ChangeEvent(change1, change2, change3)
-event.isRelevantFor(listener)
+let changes = new Changes(change1, change2, change3)
+changes.isRelevantFor(listener)
+
+let listeners = [ listener1, listener2, listener3 ]
+changes.isRelevantFor(listeners)
 ```
 
-### Test if a change is relevant to a set of listener rules
+### Refine listener
 
-You can describe a set of rules a listener should react to.
+If there are two listeners, one more specific than the other, the most specific listener is chosen.
 
 ```typescript
-let rule1 = {
-  entity: 'Task',
-  idProps: { id: 5 }
-}
+// listens to any change of a task with id 5
+let listener1 = new Change(Task, { id: 5 })
+// listens to any update of a task with id 5 for the property title
+let listener2 = new Change(Task, { id: 5 }, { method: 'update' props: ['title'] })
 
-let rule2 = {
-  entity: 'Task',
-  idProps: { id: 5 },
-  changes: { method: 'update' props: ['parentId'] }
-}
+let listeners = [ description1, description2 ]
 
-let listenerRuleSet = [ description1, description2 ]
+// is relevant because the title changed
+let change1 = new Change(new Task(5), { method: 'update', props: ['title'] })
+change1.isRelevantFor(listeners) == true
+
+// is not relevant because the description changed and listener2 only listens to title changes
+// meanwhile listener1 is ignored because listener2 is defining the behaviour for updates
+let change2 = new Change(new Task(5), { method: 'update', props: ['description'] })
+change2.isRelevantFor(listeners) == false
+
+// is relevant because of listener1
+// meanwhile listener2 is ignored because it is only relevant for updates
+let change3 = new Change(new Task(5), 'delete')
+change3.isRelevantFor(listeners) == true
 ```
 
-In this case we have two competing rules for tasks with an `id` of 5. If the incoming change is an update change then `rule2` used. In any other case `rule1` is used. That means in the case of an update the listener is only interested if the changed property was the `parentId`.
+We have two competing rules for tasks with an `id` of 5. If the incoming change is an update change then `listener2` used. In any other case `listener1` is used. That means in the case of an update the listener is only interested if the changed property was the `title`.
 
-### Unspecific change descriptions
+### Unspecific changes
 
-A change may also be more unspecific.
+A change may also be more unspecific. That way you can activate even listeners which otherwise would require a certain change.
 
 ```typescript
-// relevant to any listener which reacts to Task changes disregarding any idProps and changes
-let change = {
-  entity: 'Task'
-}
+// relevant to any listener which reacts to a task change in some kind of way
+let change = new Change(Task)
 
-let listener = {
-  entity: 'Task',
-  idProps: { id: 5 },
-  changes: { method: 'delete' }
-}
+// a listener which only listens to the deletion of a task with id 5
+let listener = new Change(Task, { id: 5 }, { method: 'delete' })
 
+// the change is nonetheless relevant for the listener because the entity name is the same
 change.isRelevantFor(listener) == true
 ```
 
+Here is an example where a more unspecific change is not relevant for a listener.
+
 ```typescript
-// relevant to any listener which reacts to Task changes of a task with id 5 disregarding any change methods or changed properties
-let change = {
-  entity: 'Task',
-  idProps: { id: 5 }
-}
+// relevant to any listener which reacts to a Task with id 5 in some kind of way
+let change = new Change(Task, { id: 5 })
 
-let listener = {
-  entity: 'Task',
-  idProps: { id: 5 },
-  changes: { method: 'delete' }
-}
+// a listener which only listens to the deletion of a task with id 7
+let listener = new Change(Task, { id: 7 }, 'delete')
 
-change.isRelevantFor(listener) == true
+// the change is not relevant for the listener because the ids differ
+change.isRelevantFor(listener) == false
 ```

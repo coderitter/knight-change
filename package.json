@@ -1,13 +1,12 @@
 {
-  "name": "mega-nice-change",
-  "version": "3.2.3",
-  "description": "A mega nice change",
+  "name": "knight-change",
+  "version": "1.0.0",
+  "description": "A data structure to describe and match changes",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
     "lib/**/*"
   ],
-  "dependencies": {},
   "devDependencies": {
     "@types/chai": "^4.2.14",
     "@types/mocha": "^5.2.7",
@@ -23,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/c0deritter/mega-nice-change.git"
+    "url": "git+https://github.com/c0deritter/knight-change.git"
   },
   "keywords": [
     ""
@@ -31,7 +30,7 @@
   "author": "Coderitter GmbH",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/c0deritter/mega-nice-change/issues"
+    "url": "https://github.com/c0deritter/knight-change/issues"
   },
-  "homepage": "https://github.com/c0deritter/mega-nice-change#readme"
+  "homepage": "https://github.com/c0deritter/knight-change#readme"
 }

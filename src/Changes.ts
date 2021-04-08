@@ -3,8 +3,8 @@ import { Change } from './Change'
 export class Changes {
   changes: Change[] = []
 
-  constructor(...changeDescriptions: Change[]) {
-    this.changes.push(...changeDescriptions)
+  constructor(...changes: Change[]) {
+    this.changes.push(...changes)
   }
 
   add(change: Change) {
