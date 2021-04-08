@@ -1,6 +1,6 @@
 # Mega Nice Change
 
-A data structure to describe and match changes.
+A data structure to describe and listen to changes of entities. It is a great fit for updating user interfaces like in a React app. The React components can rerender if any of the entities they display change.
 
 ## Install
 

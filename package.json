@@ -1,7 +1,7 @@
 {
   "name": "knight-change",
   "version": "1.0.0",
-  "description": "A data structure to describe and match changes",
+  "description": "A data structure to describe and listen to changes of entities",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
