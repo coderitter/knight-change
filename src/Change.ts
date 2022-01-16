@@ -1,66 +1,28 @@
 export const methods = [ 'create', 'update', 'delete' ]
 
-export interface Method {
-  method: string
-  props?: string[]
-}
-
 export class Change {
 
   static readonly methods = methods
 
   entityName?: string
   entity?: any
-  methods?: Method[]
-
-  get method(): Method|undefined {
-    if (this.methods != undefined && this.methods.length > 0) {
-      return this.methods[0]
-    }
-  }
-
-  set method(method: Method|undefined) {
-    if (method == undefined) {
-      this.methods = undefined
-    }
-    else {
-      this.methods = [ method ]
-    }
-  }
+  method?: string
+  props?: string[]
 
   constructor()
-  constructor(entity: object)
-  constructor(entity: object, method: string)
-  constructor(entity: object, method: Method)
-  constructor(entity: object, methods: ( string | Method )[])
-  constructor(entityName: string)
-  constructor(entityName: string, entity: object)
-  constructor(entityName: string, entity: object, method: string)
-  constructor(entityName: string, entity: object, method: Method)
-  constructor(entityName: string, entity: object, methods: ( string | Method )[])
-  constructor(entityName: string, method: string)
-  constructor(entityName: string, method: Method)
-  constructor(entityName: string, methods: ( string | Method )[])
-  constructor(classFunction: { new(): any })
-  constructor(classFunction: { new(): any }, entity: object)
-  constructor(classFunction: { new(): any }, entity: object, method: string)
-  constructor(classFunction: { new(): any }, entity: object, method: Method)
-  constructor(classFunction: { new(): any }, entity: object, methods: ( string | Method )[])
-  constructor(classFunction: { new(): any }, method: string)
-  constructor(classFunction: { new(): any }, method: Method)
-  constructor(classFunction: { new(): any }, methods: ( string | Method )[])
+  constructor(entity: object, method?: string, props?: string[])
+  constructor(entityName: string, entity?: object, method?: string, props?: string[])
+  constructor(entityName: string, method: string, props?: string[])
+  constructor(classFunction: { new(): any }, entity?: object, method?: string, props?: string[])
+  constructor(classFunction: { new(): any }, method: string, props?: string[])
 
-  constructor(arg1?: any, arg2?: any, arg3?: any) {
+  constructor(arg1?: any, arg2?: any, arg3?: any, arg4?: any) {
     if (arg1 === undefined) {
       return
     }
 
-    let methods: string | Method | ( string | Method )[] | undefined = arg3
-    let firstParameterIsEntity = false
-
     // first parameter is entity
     if (typeof arg1 == 'object' && arg1 !== null) {
-      firstParameterIsEntity = true
       this.entityName = arg1.constructor.name
       this.entity = arg1
     }
@@ -77,90 +39,25 @@ export class Change {
     }
 
     // second parameter is method
-    if (typeof arg2 == 'string' || arg2 instanceof Array) {
-      methods = arg2
+    if (typeof arg2 == 'string') {
+      this.method = arg2
+
+      if (arg3 != undefined) {
+        this.props = arg3
+      }
     }
-    // if the second parameter is an object it may be the entity or the method
+    // second parameter is the entity
     else if (typeof arg2 == 'object' && typeof arg2 !== null) {
-      // second parameter is method
-      if ('method' in arg2 && Object.keys(arg2).length == 1 || 'method' in arg2 && 'props' in arg2 && Object.keys(arg2).length == 2) {
-        methods = arg2
-      }
-      // second parameter id entity
-      else {
-        this.entity = arg2
-      }
-    }
+      this.entity = arg2
 
-    if (methods != undefined) {
-      if (! (this.methods instanceof Array)) {
-        this.methods = []
-      }
+      if (arg3 != undefined) {
+        this.method = arg3
 
-      if (typeof methods == 'string') {
-        this.methods.push({ method: methods })
-      }
-      else if (methods instanceof Array) {
-        for (let change of methods) {
-          if (typeof change == 'string') {
-            this.methods.push({ method: change })
-          }
-          else if (typeof change == 'object' && change !== null) {
-            if (change.method != undefined) {
-              this.methods.push(change)
-            }
-          }
-        }
-      }  
-      else if (typeof methods == 'object' && methods !== null) {
-        if (methods.method != undefined) {
-          this.methods.push(methods)
+        if (arg4 != undefined) {
+          this.props = arg4
         }
       }
     }
-  }
-
-  containsMethod(method: string): boolean
-  containsMethod(method: Method): boolean
-
-  containsMethod(arg1: any): boolean {
-    if (this.methods == undefined || this.methods.length == 0) {
-      return false
-    }
-
-    let method: string
-    let props: string[]|undefined = undefined
-
-    if (typeof arg1 == 'string') {
-      method = arg1
-    }
-    else {
-      method = arg1.method
-      props = arg1.props
-    }
-    
-    for (let thisMethod of this.methods) {
-      if (method != undefined && method === thisMethod.method) {
-        if (props != undefined) {
-          if (thisMethod.props == undefined) {
-            return false
-          }
-
-          for (let prop of props) {
-            if (thisMethod.props.indexOf(prop) == -1) {
-              return false
-            }
-          }
-
-          return true
-        }
-        else {
-          return true
-        }
-      }
-    }
-
-    return false
   }
 
   isRelevantFor(changes: Change|Change[]): boolean {
@@ -171,11 +68,11 @@ export class Change {
     // if there are changes attached make a list out of the most specific
     // change. this means that the change methods matches.
     // if there are not any matches consider every change.
-    if (this.methods != undefined && this.methods.length > 0) {
+    if (this.method != undefined) {
       let mostSpecificChanges = []
 
       for (let change of changes) {
-        if (change.entityName == this.entityName && change.containsAtLeastOneMethod(this)) {
+        if (change.entityName == this.entityName && change.method == this.method) {
           mostSpecificChanges.push(change)
         }
       }
@@ -187,15 +84,19 @@ export class Change {
 
     for (let change of changes) {
       // if the entity name is not relevant just skip it
-      if (! this.isEntityNameRelevant(change)) {
+      if (! this._isEntityNameRelevant(change)) {
         continue
       }
 
-      if (! this.isEntityRelevant(change)) {
+      if (! this._isEntityRelevant(change)) {
         continue
       }
 
-      if (this.areMethodsRelevant(change)) {
+      if (! this._isMethodRelevant(change)) {
+        continue
+      }
+
+      if (this._arePropsRelevant(change)) {
         return true
       }
     }
@@ -203,7 +104,64 @@ export class Change {
     return false
   }
 
-  private isEntityNameRelevant(change: Change): boolean {
+  equals(other: Change): boolean {
+    if (this.entityName !== other.entityName) {
+      return false
+    }
+
+    if (this.method !== other.method) {
+      return false
+    }
+
+    if (this.props !== other.props) {
+      if (this.props instanceof Array && other.props instanceof Array) {
+        if (this.props.length != other.props.length) {
+          return false
+        }
+
+        for (let prop of this.props) {
+          if (other.props.indexOf(prop) == -1) {
+            return false
+          }
+        }
+
+        return true
+      }
+
+      return false
+    }
+
+    if (this.entity !== other.entity) {
+      if (typeof this.entity == 'object' && typeof other.entity == 'object') {
+        let entityProps = Object.keys(this.entity)
+        let otherEntityProps = Object.keys(other.entity)
+
+        if (entityProps.length != otherEntityProps.length) {
+          return false
+        }
+
+        for (let entityProp of entityProps) {
+          if (otherEntityProps.indexOf(entityProp) == -1) {
+            return false
+          }
+        }
+
+        for (let entityProp of entityProps) {
+          if (this.entity[entityProp] !== other.entity[entityProp]) {
+            return false
+          }
+        }
+
+        return true
+      }
+
+      return false
+    }
+
+    return true
+  }
+
+  private _isEntityNameRelevant(change: Change): boolean {
     // if the entity names are not equal just skip it
     if (change.entityName != this.entityName) {
       return false
@@ -212,7 +170,7 @@ export class Change {
     return true
   }
 
-  private isEntityRelevant(change: Change): boolean {
+  private _isEntityRelevant(change: Change): boolean {
     // if one of the entities is undefined or null then it wants to be always relevant
     if (this.entity == undefined || change.entity == undefined) {
       return true
@@ -247,65 +205,40 @@ export class Change {
     return true
   }
 
-  private areMethodsRelevant(change: Change): boolean {
+  private _isMethodRelevant(change: Change): boolean {
     // if one of the changes is undefined or null then it wants it is relevant
     // because it was kept unspecific so that it is relevant in any way
-    if (this.methods == undefined || change.methods == undefined) {
+    if (this.method == undefined || change.method == undefined) {
       return true
     }
 
-    // if the changes have a different type than object then there is something wrong
-    if (! (this.methods instanceof Array) || ! (change.methods instanceof Array)) {
-      return false
-    }
-
-    // if one of the changes does not contain any element then it wants to be relevant for with anything
-    if (this.methods.length == 0 ||change.methods.length == 0) {
+    // if the method is of the same type and of equal value then it is relevant
+    if (this.method === change.method) {
       return true
-    }
-
-    for (let method of change.methods) {
-      for (let thisChange of this.methods) {
-        if (method.method == undefined || thisChange.method == undefined) {
-          continue
-        }
-
-        if (method.method === thisChange.method) {
-          if (method.props == undefined || thisChange.props == undefined) {
-            return true
-          }
-
-          if (! (method.props instanceof Array) || ! (thisChange.props instanceof Array)) {
-            return false
-          }
-
-          if (method.props.length == 0 || thisChange.props.length == 0) {
-            return true
-          }
-
-          for (let prop of method.props) {
-            for (let thisProp of thisChange.props) {
-              // if any changed prop is equal it is relevant
-              if (prop === thisProp) {
-                return true
-              }
-            }
-          }
-        }
-      }
     }
 
     // if there was not equal prop it is not relevant
     return false
   }
 
-  private containsAtLeastOneMethod(change: Change): boolean {
-    if (change.methods instanceof Array && this.methods instanceof Array) {
-      for (let method of change.methods) {
-        for (let thisMethod of this.methods) {
-          if (method.method != undefined && method.method === thisMethod.method) {
-            return true
-          }
+  private _arePropsRelevant(change: Change): boolean {
+    if (change.props == undefined || this.props == undefined) {
+      return true
+    }
+
+    if (! (change.props instanceof Array) || ! (this.props instanceof Array)) {
+      return false
+    }
+
+    if (change.props.length == 0 || this.props.length == 0) {
+      return true
+    }
+
+    for (let prop of change.props) {
+      for (let thisProp of this.props) {
+        // if any changed prop is equal it is relevant
+        if (prop === thisProp) {
+          return true
         }
       }
     }
