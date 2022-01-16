@@ -22,7 +22,7 @@ export class Changes {
     }
   }
 
-  isRelevantFor(changes: Change|Change[]): boolean {
+  isTriggered(changes: Change|Change[]|Changes): boolean {
     for (let change of this.changes) {
       if (change.isTriggered(changes)) {
         return true
