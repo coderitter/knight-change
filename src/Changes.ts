@@ -24,7 +24,7 @@ export class Changes {
 
   isRelevantFor(changes: Change|Change[]): boolean {
     for (let change of this.changes) {
-      if (change.isRelevantFor(changes)) {
+      if (change.isTriggered(changes)) {
         return true
       }
     }
