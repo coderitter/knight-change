@@ -26,7 +26,7 @@ let createChange = new Change(task, 'create')
 
 createChange.entityName == 'Task'
 createChange.entity == { id: 5, title: 'Clean up room' }
-createChange.method == { method: 'create' }
+createChange.method == { method: 'create' }
 
 /* the task is updated */
 task.title = 'Clean up room and do homework'
@@ -36,7 +36,7 @@ let updateChange = new Change(task, { method: 'update', props: ['title'] })
 updateChange.entityName == 'Task'
 updateChange.entity = { id: 5, title: 'Clean up room and do homework' }
 // if we describe an update change we can add the information which properties changed
-updateChange.method = { method: 'update', props: ['title'] }
+updateChange.method = { method: 'update', props: ['title'] }
 
 /* the task is deleted */
 task = undefined
@@ -45,7 +45,7 @@ let deleteChange = new Change(task, 'delete')
 
 deleteChange.entityName == 'Task'
 deleteChange.entity = { id: 5, title: 'Clean up room and do homework' }
-deleteChange.method = { method: 'delete' }
+deleteChange.method = { method: 'delete' }
 ```
 
 ### Describe a change listener that wants to react on certain changes
