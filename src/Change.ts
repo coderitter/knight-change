@@ -1,10 +1,8 @@
-import { Changes } from "."
+import { Changes } from '.'
 
 export const methods = [ 'create', 'update', 'delete' ]
 
 export class Change {
-
-  static readonly methods = methods
 
   entityName?: string
   entity?: any
@@ -18,45 +16,47 @@ export class Change {
   constructor(classFunction: { new(): any }, entity?: object, method?: string, props?: string[])
   constructor(classFunction: { new(): any }, method: string, props?: string[])
 
-  constructor(arg1?: any, arg2?: any, arg3?: any, arg4?: any) {
-    if (arg1 === undefined) {
+  constructor(...args: any[]) {
+    if (args.length == 0) {
       return
     }
 
     // first parameter is entity
-    if (typeof arg1 == 'object' && arg1 !== null) {
-      this.entityName = arg1.constructor.name
-      this.entity = arg1
+    if (args[0] instanceof Object) {
+      this.entityName = args[0].constructor.name
+      this.entity = args[0]
     }
     // first parameter is entityName
-    else if (typeof arg1 == 'string') {
-      this.entityName = arg1
+    else if (typeof args[0] == 'string') {
+      this.entityName = args[0]
     }
     // first parameter is classFunction
-    else if (typeof arg1 == 'function' && (<any> arg1).name != undefined) {
-      this.entityName = (<any> arg1).name
+    else if (typeof args[0] == 'function' && (<any> args[0]).name != undefined) {
+      this.entityName = (<any> args[0]).name
     }
     else {
       throw new TypeError('First argument was neither an entity object nor an entity name nor a class function')
     }
 
-    // second parameter is method
-    if (typeof arg2 == 'string') {
-      this.method = arg2
+    if (args.length > 1) {
+      // second parameter is method
+      if (typeof args[1] == 'string') {
+        this.method = args[1]
 
-      if (arg3 != undefined) {
-        this.props = arg3
+        if (args.length > 2) {
+          this.props = args[2]
+        }
       }
-    }
-    // second parameter is the entity
-    else if (typeof arg2 == 'object' && typeof arg2 !== null) {
-      this.entity = arg2
+      // second parameter is the entity
+      else if (args[1] instanceof Object) {
+        this.entity = args[1]
 
-      if (arg3 != undefined) {
-        this.method = arg3
+        if (args.length > 2) {
+          this.method = args[2]
 
-        if (arg4 != undefined) {
-          this.props = arg4
+          if (args.length > 3) {
+            this.props = args[3]
+          }
         }
       }
     }
