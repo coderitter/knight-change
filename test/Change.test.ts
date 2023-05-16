@@ -9,7 +9,7 @@ describe('Change', function() {
       expect(change.entityName).to.be.undefined
       expect(change.entity).to.be.undefined
       expect(change.method).to.be.undefined
-      expect(change.props).to.be.undefined
+      expect(change.properties).to.be.undefined
     })
 
     it('should set with a entity name', function() {
@@ -17,7 +17,7 @@ describe('Change', function() {
       expect(change.entityName).to.equal('Entity')
       expect(change.entity).to.be.undefined
       expect(change.method).to.be.undefined
-      expect(change.props).to.be.undefined
+      expect(change.properties).to.be.undefined
     })
 
     it('should set with a entity name and entity', function() {
@@ -25,7 +25,7 @@ describe('Change', function() {
       expect(change.entityName).to.equal('Entity')
       expect(change.entity).to.deep.equal({ a: 'a' })
       expect(change.method).to.be.undefined
-      expect(change.props).to.be.undefined
+      expect(change.properties).to.be.undefined
     })
 
     it('should set with a entity name, entity and a method', function() {
@@ -33,7 +33,7 @@ describe('Change', function() {
       expect(change.entityName).to.equal('Entity')
       expect(change.entity).to.deep.equal({ a: 'a' })
       expect(change.method).to.equal('delete')
-      expect(change.props).to.be.undefined
+      expect(change.properties).to.be.undefined
     })
 
     it('should set with a entity name, entity and a method', function() {
@@ -41,7 +41,7 @@ describe('Change', function() {
       expect(change.entityName).to.equal('Entity')
       expect(change.entity).to.deep.equal({ a: 'a' })
       expect(change.method).to.equal('delete')
-      expect(change.props).to.deep.equal(['a', 'b'])
+      expect(change.properties).to.deep.equal(['a', 'b'])
     })
 
     it('should set with a entity name and a method', function() {
@@ -49,15 +49,15 @@ describe('Change', function() {
       expect(change.entityName).to.equal('Entity')
       expect(change.entity).to.be.undefined
       expect(change.method).to.equal('delete')
-      expect(change.props).to.be.undefined
+      expect(change.properties).to.be.undefined
     })
 
-    it('should set with a entity name, a method and props', function() {
+    it('should set with a entity name, a method and properties', function() {
       let change = new Change('Entity', 'delete', ['a', 'b'])
       expect(change.entityName).to.equal('Entity')
       expect(change.entity).to.be.undefined
       expect(change.method).to.equal('delete')
-      expect(change.props).to.deep.equal(['a', 'b'])
+      expect(change.properties).to.deep.equal(['a', 'b'])
     })
 
     it('should set with a constructor function', function() {
@@ -65,7 +65,7 @@ describe('Change', function() {
       expect(change.entityName).to.equal('TestEntity1')
       expect(change.entity).to.be.undefined
       expect(change.method).to.be.undefined
-      expect(change.props).to.be.undefined
+      expect(change.properties).to.be.undefined
     })
 
     it('should set with a constructor function and entity', function() {
@@ -73,7 +73,7 @@ describe('Change', function() {
       expect(change.entityName).to.equal('TestEntity1')
       expect(change.entity).to.deep.equal({ a: 'a' })
       expect(change.method).to.be.undefined
-      expect(change.props).to.be.undefined
+      expect(change.properties).to.be.undefined
     })
 
     it('should set with a constructor function, entity and a method', function() {
@@ -81,15 +81,15 @@ describe('Change', function() {
       expect(change.entityName).to.equal('TestEntity1')
       expect(change.entity).to.deep.equal({ a: 'a' })
       expect(change.method).to.equal('delete')
-      expect(change.props).to.be.undefined
+      expect(change.properties).to.be.undefined
     })
 
-    it('should set with a constructor function, an entity, a method and props', function() {
+    it('should set with a constructor function, an entity, a method and properties', function() {
       let change = new Change(TestEntity1, { a: 'a' }, 'delete', ['a', 'b'])
       expect(change.entityName).to.equal('TestEntity1')
       expect(change.entity).to.deep.equal({ a: 'a' })
       expect(change.method).to.equal('delete')
-      expect(change.props).to.deep.equal(['a', 'b'])
+      expect(change.properties).to.deep.equal(['a', 'b'])
     })
 
     it('should set with a constructor function and a method', function() {
@@ -97,15 +97,15 @@ describe('Change', function() {
       expect(change.entityName).to.equal('TestEntity1')
       expect(change.entity).to.be.undefined
       expect(change.method).to.equal('delete')
-      expect(change.props).to.be.undefined
+      expect(change.properties).to.be.undefined
     })
 
-    it('should set with a constructor function, a method and props', function() {
+    it('should set with a constructor function, a method and properties', function() {
       let change = new Change(TestEntity1, 'delete', ['a', 'b'])
       expect(change.entityName).to.equal('TestEntity1')
       expect(change.entity).to.be.undefined
       expect(change.method).to.equal('delete')
-      expect(change.props).to.deep.equal(['a', 'b'])
+      expect(change.properties).to.deep.equal(['a', 'b'])
     })
 
     it('should set with an entity', function() {
@@ -114,7 +114,7 @@ describe('Change', function() {
       expect(change.entityName).to.equal('TestEntity1')
       expect(change.entity).to.equal(entity)
       expect(change.method).to.be.undefined
-      expect(change.props).to.be.undefined
+      expect(change.properties).to.be.undefined
     })
 
     it('should set with an entity and a method', function() {
@@ -123,207 +123,207 @@ describe('Change', function() {
       expect(change.entityName).to.equal('TestEntity1')
       expect(change.entity).to.equal(entity)
       expect(change.method).to.equal('delete')
-      expect(change.props).to.be.undefined
+      expect(change.properties).to.be.undefined
     })
 
-    it('should set with an entity, a methods and props', function() {
+    it('should set with an entity, a methods and properties', function() {
       let entity = new TestEntity1
       let change = new Change(entity, 'delete', ['a', 'b'])
       expect(change.entityName).to.equal('TestEntity1')
       expect(change.method).to.equal('delete')
-      expect(change.props).to.deep.equal(['a', 'b'])
+      expect(change.properties).to.deep.equal(['a', 'b'])
     })
   })
 
-  describe.only('isTriggered', function() {
-    it('should trigger if the subscription and the change not specified anything', function() {
-      let subscription = new Change
+  describe('triggeredBy', function() {
+    it('should trigger if the listener and the change not specified anything', function() {
+      let listener = new Change
       let change = new Change
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should trigger if the subscription does not define anything but the change an entity name', function() {
-      let subscription = new Change
+    it('should trigger if the listener does not define anything but the change an entity name', function() {
+      let listener = new Change
       let change = new Change('Entity')
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should trigger if the subscription defines an entity name but the change nothing', function() {
-      let subscription = new Change('Entity')
+    it('should trigger if the listener defines an entity name but the change nothing', function() {
+      let listener = new Change('Entity')
       let change = new Change
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should trigger if the subscription does not define anything but the change an entity name', function() {
-      let subscription = new Change
+    it('should trigger if the listener does not define anything but the change an entity name', function() {
+      let listener = new Change
       let change = new Change({ a: 'a', b: 'b' })
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should trigger if the subscription defines an entity but the change nothing', function() {
-      let subscription = new Change({ a: 'a', b: 'b' })
+    it('should trigger if the listener defines an entity but the change nothing', function() {
+      let listener = new Change({ a: 'a', b: 'b' })
       let change = new Change
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should trigger if the subscription does not define anything but the change a method', function() {
-      let subscription = new Change
+    it('should trigger if the listener does not define anything but the change a method', function() {
+      let listener = new Change
       let change = new Change
       change.method = 'delete'
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should trigger if the subscription defines an entity but the change nothing', function() {
-      let subscription = new Change
+    it('should trigger if the listener defines an entity but the change nothing', function() {
+      let listener = new Change
       let change = new Change
-      subscription.method = 'delete'
-      expect(subscription.isTriggered(change)).to.be.true
+      listener.method = 'delete'
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should trigger if the subscription does not define anything but the change props', function() {
-      let subscription = new Change
+    it('should trigger if the listener does not define anything but the change properties', function() {
+      let listener = new Change
       let change = new Change
-      change.props = ['a', 'b']
-      expect(subscription.isTriggered(change)).to.be.true
+      change.properties = ['a', 'b']
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should trigger if the subscription defines props but the change nothing', function() {
-      let subscription = new Change
+    it('should trigger if the listener defines properties but the change nothing', function() {
+      let listener = new Change
       let change = new Change
-      subscription.props = ['a', 'b']
-      expect(subscription.isTriggered(change)).to.be.true
+      listener.properties = ['a', 'b']
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
     it('should trigger if the entity names are the same', function() {
-      let subscription = new Change('Entity')
+      let listener = new Change('Entity')
       let change = new Change('Entity')
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
     it('should not trigger if the entity names are not the same', function() {
-      let subscription = new Change('Entity1')
+      let listener = new Change('Entity1')
       let change = new Change('Entity2')
-      expect(subscription.isTriggered(change)).to.be.false
+      expect(listener.triggeredBy(change)).to.be.false
     })
 
-    it('should trigger if the subscription does not define an entity but the change does', function() {
-      let subscription = new Change('Entity')
+    it('should trigger if the listener does not define an entity but the change does', function() {
+      let listener = new Change('Entity')
       let change = new Change('Entity', { a: 'a' })
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should trigger if the subscription defines an entity but the change does not', function() {
-      let subscription = new Change('Entity', { a: 'a' })
+    it('should trigger if the listener defines an entity but the change does not', function() {
+      let listener = new Change('Entity', { a: 'a' })
       let change = new Change('Entity')
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
     it('should trigger if the entities look the same', function() {
-      let subscription = new Change('Entity', { a: 'a', b: 'b' })
+      let listener = new Change('Entity', { a: 'a', b: 'b' })
       let change = new Change('Entity', { a: 'a', b: 'b' })
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should trigger if the subscription defines lesser properties and the change more but with the same values', function() {
-      let subscription = new Change('Entity', { a: 'a' })
+    it('should trigger if the listener defines lesser properties and the change more but with the same values', function() {
+      let listener = new Change('Entity', { a: 'a' })
       let change = new Change('Entity', { a: 'a', b: 'b' })
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should not trigger if the subscription defines more properties and the change less but with the same values', function() {
-      let subscription = new Change('Entity', { a: 'a', b: 'b' })
+    it('should not trigger if the listener defines more properties and the change less but with the same values', function() {
+      let listener = new Change('Entity', { a: 'a', b: 'b' })
       let change = new Change('Entity', { a: 'a' })
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should not trigger of the entities look different', function() {
-      let subscription = new Change('Entity', { a: 'a', b: 'b' })
+    it('should not trigger if the entities look different', function() {
+      let listener = new Change('Entity', { a: 'a', b: 'b' })
       let change = new Change('Entity', { a: 'a', b: 'c' })
-      expect(subscription.isTriggered(change)).to.be.false
+      expect(listener.triggeredBy(change)).to.be.false
     })
 
     it('should trigger if null values are involved', function() {
-      let subscription = new Change('Entity', { a: null })
+      let listener = new Change('Entity', { a: null })
       let change = new Change('Entity', { a: null })
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should not trigger if the subscription defines a property to be null but the change as undefined', function() {
-      let subscription = new Change('Entity', { a: null })
+    it('should not trigger if the listener defines a property to be null but the change as undefined', function() {
+      let listener = new Change('Entity', { a: null })
       let change = new Change('Entity', { a: undefined })
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should not trigger if the subscription defines a property to be null but the change as 0', function() {
-      let subscription = new Change('Entity', { a: null })
+    it('should not trigger if the listener defines a property to be null but the change as 0', function() {
+      let listener = new Change('Entity', { a: null })
       let change = new Change('Entity', { a: 'a' })
-      expect(subscription.isTriggered(change)).to.be.false
+      expect(listener.triggeredBy(change)).to.be.false
     })
 
     it('should trigger if the change also defines a method', function() {
-      let subscription = new Change('Entity', { a: 'a' })
+      let listener = new Change('Entity', { a: 'a' })
       let change = new Change('Entity', { a: 'a' }, 'update')
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should trigger if the subscription also defines a method', function() {
-      let subscription = new Change('Entity', { a: 'a' }, 'update')
+    it('should trigger if the listener also defines a method', function() {
+      let listener = new Change('Entity', { a: 'a' }, 'update')
       let change = new Change('Entity', { a: 'a' })
-      expect(change.isTriggered(subscription)).to.be.true
+      expect(change.triggeredBy(listener)).to.be.true
     })
 
     it('should trigger if the method is the same', function() {
-      let subscription = new Change('Entity', { a: 'a' }, 'update')
+      let listener = new Change('Entity', { a: 'a' }, 'update')
       let change = new Change('Entity', { a: 'a' }, 'update')
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
     it('should not trigger if the method is different', function() {
-      let subscription = new Change('Entity', { a: 'a' }, 'update')
+      let listener = new Change('Entity', { a: 'a' }, 'update')
       let change = new Change('Entity', { a: 'a' }, 'delete')
-      expect(subscription.isTriggered(change)).to.be.false
+      expect(listener.triggeredBy(change)).to.be.false
     })
 
     it('should trigger if the change defines additional properties', function() {
-      let subscription = new Change('Entity', { a: 'a' }, 'update')
+      let listener = new Change('Entity', { a: 'a' }, 'update')
       let change = new Change('Entity', { a: 'a' }, 'update', ['a', 'b'])
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should trigger if the subscription defindes additional properties', function() {
-      let subscription = new Change('Entity', { a: 'a' }, 'update', ['a', 'b'])
+    it('should trigger if the listener defindes additional properties', function() {
+      let listener = new Change('Entity', { a: 'a' }, 'update', ['a', 'b'])
       let change = new Change('Entity', { a: 'a' }, 'update')
-      expect(change.isTriggered(subscription)).to.be.true
+      expect(change.triggeredBy(listener)).to.be.true
     })
 
-    it('should trigger if both define the props', function() {
-      let subscription = new Change('Entity', { a: 'a' }, 'update', ['b', 'a'])
+    it('should trigger if both define the properties', function() {
+      let listener = new Change('Entity', { a: 'a' }, 'update', ['b', 'a'])
       let change = new Change('Entity', { a: 'a' }, 'update', ['a', 'b'])
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should trigger if both define the same props but additional different ones', function() {
-      let subscription = new Change('Entity', { a: 'a' }, 'update', ['a', 'b', 'c'])
+    it('should trigger if both define the same properties but additional different ones', function() {
+      let listener = new Change('Entity', { a: 'a' }, 'update', ['a', 'b', 'c'])
       let change = new Change('Entity', { a: 'a' }, 'update', ['a', 'b', 'd'])
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should trigger if the subscription describes less props but the same as the change', function() {
-      let subscription = new Change('Entity', { a: 'a' }, 'update', ['a'])
+    it('should trigger if the listener describes less properties but the same as the change', function() {
+      let listener = new Change('Entity', { a: 'a' }, 'update', ['a'])
       let change = new Change('Entity', { a: 'a' }, 'update', ['a', 'b'])
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should trigger if the subscription describes more props but the same as the change', function() {
-      let subscription = new Change('Entity', { a: 'a' }, 'update', ['a', 'b'])
+    it('should trigger if the listener describes more properties but the same as the change', function() {
+      let listener = new Change('Entity', { a: 'a' }, 'update', ['a', 'b'])
       let change = new Change('Entity', { a: 'a' }, 'update', ['a'])
-      expect(subscription.isTriggered(change)).to.be.true
+      expect(listener.triggeredBy(change)).to.be.true
     })
 
-    it('should not trigger if both define different props', function() {
-      let subscription = new Change('Entity', { a: 'a' }, 'update', ['a', 'b'])
+    it('should not trigger if both define different properties', function() {
+      let listener = new Change('Entity', { a: 'a' }, 'update', ['a', 'b'])
       let change = new Change('Entity', { a: 'a' }, 'update', ['c', 'd'])
-      expect(subscription.isTriggered(change)).to.be.false
+      expect(listener.triggeredBy(change)).to.be.false
     })
 
     it('should return true if there is at least one relevant description', function() {
@@ -335,7 +335,7 @@ describe('Change', function() {
         new Change('d', { id: 4 })
      ]
 
-      let result = change.isTriggered(challengers)
+      let result = change.triggeredBy(challengers)
 
       expect(result).to.equal(true)
     })
@@ -349,7 +349,7 @@ describe('Change', function() {
         new Change('d', { a: 'd' })
      ]
 
-      let result = change.isTriggered(challengers)
+      let result = change.triggeredBy(challengers)
 
       expect(result).to.equal(false)
     })
@@ -362,19 +362,19 @@ describe('Change', function() {
      ]
 
       let change1 = new Change('Entity1', { a: 'a' }, 'update', ['a'])
-      let result1 = change1.isTriggered(challengers)
+      let result1 = change1.triggeredBy(challengers)
       expect(result1).to.equal(true)
 
       let change2 = new Change('Entity1', { a: 'a' }, 'delete', ['a'])
-      let result2 = change2.isTriggered(challengers)
+      let result2 = change2.triggeredBy(challengers)
       expect(result2).to.equal(false)
 
       let change3 = new Change('Entity1', { a: 'a' }, 'delete', ['b'])
-      let result3 = change3.isTriggered(challengers)
+      let result3 = change3.triggeredBy(challengers)
       expect(result3).to.equal(true)
 
       let change4 = new Change('Entity2', { a: 'a' }, 'update', ['a'])
-      let result4 = change4.isTriggered(challengers)
+      let result4 = change4.triggeredBy(challengers)
       expect(result4).to.equal(true)
     })
   })
@@ -405,10 +405,10 @@ describe('Change', function() {
       expect(change1.equals(change2)).to.be.false
     })
 
-    it('should not return true if for one everything is undefined but for the other props are set', function() {
+    it('should not return true if for one everything is undefined but for the other properties are set', function() {
       let change1 = new Change
       let change2 = new Change
-      change2.props = ['a', 'b']
+      change2.properties = ['a', 'b']
       expect(change1.equals(change2)).to.be.false
     })
 
@@ -424,19 +424,19 @@ describe('Change', function() {
       expect(change1.equals(change2)).to.be.false
     })
 
-    it('should return true if the entity has the same props', function() {
+    it('should return true if the entity has the same properties', function() {
       let change1 = new Change({ a: 'a', b: 'b' })
       let change2 = new Change({ a: 'a', b: 'b' })
       expect(change1.equals(change2)).to.be.true
     })
 
-    it('should not return true if the entity has different props', function() {
+    it('should not return true if the entity has different properties', function() {
       let change1 = new Change({ a: 'a', b: 'b' })
       let change2 = new Change({ a: 'a' })
       expect(change1.equals(change2)).to.be.false
     })
 
-    it('should not return true if the entity has the same props but with different values', function() {
+    it('should not return true if the entity has the same properties but with different values', function() {
       let change1 = new Change({ a: 'a', b: 'b' })
       let change2 = new Change({ a: 'a', b: 'c' })
       expect(change1.equals(change2)).to.be.false
@@ -458,19 +458,19 @@ describe('Change', function() {
       expect(change1.equals(change2)).to.be.false
     })
 
-    it('should return true if the props are the same', function() {
+    it('should return true if the properties are the same', function() {
       let change1 = new Change
       let change2 = new Change
-      change1.props = ['a', 'b']
-      change2.props = ['a', 'b']
+      change1.properties = ['a', 'b']
+      change2.properties = ['a', 'b']
       expect(change1.equals(change2)).to.be.true
     })
 
-    it('should not return true if the props are different', function() {
+    it('should not return true if the properties are different', function() {
       let change1 = new Change
       let change2 = new Change
-      change1.props = ['a', 'b']
-      change2.props = ['a']
+      change1.properties = ['a', 'b']
+      change2.properties = ['a']
       expect(change1.equals(change2)).to.be.false
     })
   })

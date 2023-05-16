@@ -1,6 +1,7 @@
 import { Change } from './Change'
 
 export class Changes {
+  
   changes: Change[] = []
 
   constructor(...changes: Change[]) {
@@ -22,9 +23,9 @@ export class Changes {
     }
   }
 
-  isTriggered(changes: Change|Change[]|Changes): boolean {
+  triggeredBy(changes: Change|Change[]|Changes): boolean {
     for (let change of this.changes) {
-      if (change.isTriggered(changes)) {
+      if (change.triggeredBy(changes)) {
         return true
       }
     }

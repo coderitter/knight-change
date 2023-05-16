@@ -1,38 +1,36 @@
 import { Changes } from '.'
 
-export const methods = [ 'create', 'update', 'delete' ]
-
 export class Change {
 
   entityName?: string
   entity?: any
-  method?: string
-  props?: string[]
+  method?: 'create'|'update'|'delete'
+  properties?: string[]
 
   constructor()
-  constructor(entity: object, method?: string, props?: string[])
-  constructor(entityName: string, entity?: object, method?: string, props?: string[])
-  constructor(entityName: string, method: string, props?: string[])
-  constructor(classFunction: { new(): any }, entity?: object, method?: string, props?: string[])
-  constructor(classFunction: { new(): any }, method: string, props?: string[])
+  constructor(entity: object, method?: string, properties?: string[])
+  constructor(entityName: string, entity?: object, method?: string, properties?: string[])
+  constructor(entityName: string, method: string, properties?: string[])
+  constructor(classFunction: { new(): any }, entity?: object, method?: string, properties?: string[])
+  constructor(classFunction: { new(): any }, method: string, properties?: string[])
 
   constructor(...args: any[]) {
     if (args.length == 0) {
       return
     }
 
-    // first parameter is entity
-    if (args[0] instanceof Object) {
+    // first parameter is classFunction
+    if (typeof args[0] == 'function' && args[0].name != undefined) {
+      this.entityName = args[0].name
+    }
+    // first parameter is object
+    else if (args[0] instanceof Object) {
       this.entityName = args[0].constructor.name
       this.entity = args[0]
     }
     // first parameter is entityName
     else if (typeof args[0] == 'string') {
       this.entityName = args[0]
-    }
-    // first parameter is classFunction
-    else if (typeof args[0] == 'function' && (<any> args[0]).name != undefined) {
-      this.entityName = (<any> args[0]).name
     }
     else {
       throw new TypeError('First argument was neither an entity object nor an entity name nor a class function')
@@ -41,10 +39,10 @@ export class Change {
     if (args.length > 1) {
       // second parameter is method
       if (typeof args[1] == 'string') {
-        this.method = args[1]
+        this.method = args[1] as any
 
         if (args.length > 2) {
-          this.props = args[2]
+          this.properties = args[2]
         }
       }
       // second parameter is the entity
@@ -55,14 +53,14 @@ export class Change {
           this.method = args[2]
 
           if (args.length > 3) {
-            this.props = args[3]
+            this.properties = args[3]
           }
         }
       }
     }
   }
 
-  isTriggered(changes: Change|Change[]|Changes): boolean {
+  triggeredBy(changes: Change|Change[]|Changes): boolean {
     if (changes instanceof Change) {
       changes = [ changes ]
     }
@@ -70,8 +68,8 @@ export class Change {
       changes = changes.changes
     }
 
-    // if there are changes attached make a list out of the most specific
-    // change. this means that the methods matches.
+    // if there are changes attached make a list out of the most specific change.
+    // this means that the methods matches.
     // if there are not any matches consider every change.
     if (this.method != undefined) {
       let mostSpecificChanges = []
@@ -88,19 +86,19 @@ export class Change {
     }
 
     for (let change of changes) {
-      if (! this._isEntityNameTriggering(change)) {
+      if (! this.triggeredByEntityName(change)) {
         continue
       }
 
-      if (! this._isEntityTriggering(change)) {
+      if (! this.triggeredByEntity(change)) {
         continue
       }
 
-      if (! this._isMethodTriggering(change)) {
+      if (! this.triggeredByMethod(change)) {
         continue
       }
 
-      if (this._arePropsTriggering(change)) {
+      if (this.triggeredByProperties(change)) {
         return true
       }
     }
@@ -117,14 +115,14 @@ export class Change {
       return false
     }
 
-    if (this.props !== other.props) {
-      if (this.props instanceof Array && other.props instanceof Array) {
-        if (this.props.length != other.props.length) {
+    if (this.properties !== other.properties) {
+      if (this.properties instanceof Array && other.properties instanceof Array) {
+        if (this.properties.length != other.properties.length) {
           return false
         }
 
-        for (let prop of this.props) {
-          if (other.props.indexOf(prop) == -1) {
+        for (let property of this.properties) {
+          if (other.properties.indexOf(property) == -1) {
             return false
           }
         }
@@ -137,21 +135,21 @@ export class Change {
 
     if (this.entity !== other.entity) {
       if (typeof this.entity == 'object' && typeof other.entity == 'object') {
-        let entityProps = Object.keys(this.entity)
-        let otherEntityProps = Object.keys(other.entity)
+        let thisProperties = Object.keys(this.entity)
+        let otherProperties = Object.keys(other.entity)
 
-        if (entityProps.length != otherEntityProps.length) {
+        if (thisProperties.length != otherProperties.length) {
           return false
         }
 
-        for (let entityProp of entityProps) {
-          if (otherEntityProps.indexOf(entityProp) == -1) {
+        for (let thisProperty of thisProperties) {
+          if (otherProperties.indexOf(thisProperty) == -1) {
             return false
           }
         }
 
-        for (let entityProp of entityProps) {
-          if (this.entity[entityProp] !== other.entity[entityProp]) {
+        for (let thisProperty of thisProperties) {
+          if (this.entity[thisProperty] !== other.entity[thisProperty]) {
             return false
           }
         }
@@ -165,7 +163,7 @@ export class Change {
     return true
   }
 
-  private _isEntityNameTriggering(other: Change): boolean {
+  triggeredByEntityName(other: Change): boolean {
     if (this.entityName == undefined || other.entityName == undefined) {
       return true
     }
@@ -173,8 +171,8 @@ export class Change {
     return this.entityName === other.entityName
   }
 
-  private _isEntityTriggering(other: Change): boolean {
-    // if one of the entities is undefined or null then it wants to be always relevant
+  triggeredByEntity(other: Change): boolean {
+    // if one of the entities is undefined or null then it is triggering
     if (this.entity == undefined || other.entity == undefined) {
       return true
     }
@@ -184,18 +182,48 @@ export class Change {
       return false
     }
 
-    // if one of the entity does not contain any key then it wants to be relevant for anything
-    if (Object.keys(this.entity).length == 0 || Object.keys(other.entity).length == 0) {
+    // if one of the entities does not contain any key then it is triggering
+    let containsAtLeastOneProperty = false
+
+    for (let property in this.entity) {
+      if (! this.entity.propertyIsEnumerable(property)) {
+        continue
+      }
+
+      containsAtLeastOneProperty = true
+      break
+    }
+
+    if (! containsAtLeastOneProperty) {
       return true
     }
 
-    let entityProps = Object.keys(this.entity)
-    for (let prop of entityProps) {
-      if (this.entity[prop] === undefined || other.entity[prop] === undefined) {
-        return true
+    containsAtLeastOneProperty = false
+    for (let property in other.entity) {
+      if (! other.entity.propertyIsEnumerable(property)) {
+        continue
+      }
+
+      containsAtLeastOneProperty = true
+      break
+    }
+
+    if (! containsAtLeastOneProperty) {
+      return true
+    }
+
+    // compare every property    
+    for (let property in this.entity) {
+      if (! this.entity.propertyIsEnumerable(property)) {
+        continue
+      }
+
+      // if one of the properties is undefined then it has the potential to trigger, it is not a false yet
+      if (this.entity[property] === undefined || other.entity[property] === undefined) {
+        continue
       }
       
-      if (this.entity[prop] !== other.entity[prop]) {
+      if (this.entity[property] !== other.entity[property]) {
         return false
       }
     }
@@ -203,39 +231,38 @@ export class Change {
     return true
   }
 
-  private _isMethodTriggering(other: Change): boolean {
-    // if one of the changes is undefined or null then it wants it is relevant
-    // because it was kept unspecific so that it is relevant in any way
+  triggeredByMethod(other: Change): boolean {
+    // if one of the changes is undefined or null then it is triggering
     if (this.method == undefined || other.method == undefined) {
       return true
     }
 
-    // if the method is of the same type and of equal value then it is relevant
+    // if the method is of the same type and of equal value then it is triggering
     if (this.method === other.method) {
       return true
     }
 
-    // if there was not equal prop it is not relevant
+    // if there was not equal prop it is not triggering
     return false
   }
 
-  private _arePropsTriggering(other: Change): boolean {
-    if (other.props == undefined || this.props == undefined) {
+  triggeredByProperties(other: Change): boolean {
+    if (other.properties == undefined || this.properties == undefined) {
       return true
     }
 
-    if (! (other.props instanceof Array) || ! (this.props instanceof Array)) {
+    if (! (other.properties instanceof Array) || ! (this.properties instanceof Array)) {
       return false
     }
 
-    if (other.props.length == 0 || this.props.length == 0) {
+    if (other.properties.length == 0 || this.properties.length == 0) {
       return true
     }
 
-    for (let prop of other.props) {
-      for (let thisProp of this.props) {
-        // if any changed prop is equal it is relevant
-        if (prop === thisProp) {
+    for (let otherProperty of other.properties) {
+      for (let thisProperty of this.properties) {
+        // if any changed property is equal it is triggering
+        if (otherProperty === thisProperty) {
           return true
         }
       }
